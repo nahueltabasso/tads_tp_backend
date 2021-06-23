@@ -21,6 +21,27 @@ const generarJWT = (id, nombre, email) => {
     });
 }
 
+const generarToken = (id, email) => {
+    return new Promise((resolve, reject) => {
+        const payload = {
+            id,
+            email
+        };
+
+        jwt.sign(payload, process.env.JWT_SECRET_AUTH, {
+            expiresIn: '1h'
+        }, (err, token) => {
+            if (err) {
+                console.log(err);
+                reject('Ocurrio un error en la generacion del Token');
+            } else {
+                resolve(token);
+            }
+        });
+    });
+}
+
 module.exports = {
-    generarJWT
+    generarJWT,
+    generarToken
 }

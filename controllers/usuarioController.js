@@ -1,6 +1,14 @@
 const { response } = require('express');
 const Usuario = require('../models/usuario');
-const { HTTP_STATUS_OK, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR, HTTP_NOT_FOUND, HTTP_CREATED, HTTP_BAD_REQUEST, HTTP_NOT_CONTENT } = require("../utils/constantes");
+const {
+    HTTP_STATUS_OK,
+    HTTP_INTERNAL_SERVER_ERROR,
+    MSG_ERROR_ADMINISTRADOR,
+    HTTP_NOT_FOUND,
+    HTTP_CREATED,
+    HTTP_BAD_REQUEST,
+    HTTP_NOT_CONTENT
+} = require("../utils/constantes");
 
 const getAll = async(request, response) => {
     console.log('ID Usuario logueado : ', request.id);

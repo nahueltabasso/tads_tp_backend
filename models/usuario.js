@@ -8,7 +8,7 @@ const UsuarioSchema = Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     password: {
         type: String,
@@ -58,6 +58,13 @@ const UsuarioSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Rol',
         require: true
+    },
+    tokenActivacion: {
+        type: String,
+        require: true
+    },
+    resetToken: {
+        type: String
     }
 });
 

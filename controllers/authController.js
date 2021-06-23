@@ -11,10 +11,11 @@ const {
     ROLE_USER, MSG_ERROR_ADMINISTRADOR
 } = require( "../utils/constantes");
 const { googleVerify } = require('../helpers/googleVerify');
+const { enviarEmail } = require('../helpers/emailService');
+const { hashString } = require('../utils/hash');
 
 const registrarUsuario = async(request, response = response) => {
     const { nombreApellido, email, password, telefono, fechaNacimiento, genero, biografia, hobbies } = request.body;
-
     try {
         // Validamos si ya existe un usuario con el email del request
         const existeUsuario = await Usuario.findOne({ email: email });
@@ -26,7 +27,6 @@ const registrarUsuario = async(request, response = response) => {
         }
 
         const usuario = new Usuario(request.body);
-
         // Si el rol del usuario es null le asignamos por defecto el rol de ROLE_USER
         if (!usuario.rol) {
             const rol = await Rol.findOne({ nombreRol: ROLE_USER });
@@ -43,8 +43,19 @@ const registrarUsuario = async(request, response = response) => {
         // Encriptar la contraseña del usuario
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(password, salt);
+        // Generamos el token de activacion de la cuenta
+        const tokenActivacion = hashString(email);
+        usuario.tokenActivacion = tokenActivacion;
         // Persistimos el objeto en la base de datos
         await usuario.save();
+
+        // Envio de email para activacion de cuenta
+        const emailStatus = enviarEmail('Registracion Exitosa!', usuario.email,
+            'Haga click en el enlase para activar su cuenta!',
+            `${process.env.CLIENT_PATH}/activar-cuenta?token=${tokenActivacion}`);
+        if (!emailStatus) {
+            throw Error('Ocurrio un error con el envio del Email');
+        }
 
         // Generamos el JWT (Json Web Token)
         const token = await generarJWT(usuario.id, usuario.nombreApellido, usuario.email);
@@ -63,10 +74,39 @@ const registrarUsuario = async(request, response = response) => {
     }
 }
 
+const activeAccount = async(request, response = response) => {
+    const tokenActivacion = request.query.token;
+    try {
+        if (tokenActivacion) {
+            const usuarioDB = await Usuario.findOne({ tokenActivacion: tokenActivacion });
+            if (!usuarioDB) {
+                return response.status(HTTP_NOT_FOUND).json({
+                    ok: false,
+                    msg: 'El token no corresponde a ningun usuario'
+                });
+            }
+            // Activamos la cuenta del usuario
+            usuarioDB.estado = true;
+            const usuarioActivado = await Usuario.findByIdAndUpdate(usuarioDB.id, usuarioDB, { new: true });      // new: true para que retorne el usuario actualizado
+
+            return response.status(HTTP_STATUS_OK).json({
+                ok: true,
+                msg: 'Cuenta activada!',
+                usuario: usuarioActivado
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
+}
+
 const getRoles = async(request, response = response) => {
     try {
         const roles = await Rol.find();
-
         response.status(HTTP_STATUS_OK).json({
             ok: true,
             roles: roles
@@ -172,6 +212,7 @@ const facebookLogin = async(request, response = response) => {
 
 module.exports = {
     registrarUsuario,
+    activeAccount,
     getRoles,
     login,
     googleLogin,
