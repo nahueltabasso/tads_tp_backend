@@ -210,11 +210,32 @@ const facebookLogin = async(request, response = response) => {
     console.log('Facebook Auth');
 }
 
+const generateRefreshToken = async(request, response = response) => {
+    const idUsuario = request.id;
+    let usuario;
+    try {
+        usuario = await Usuario.findById(idUsuario);
+    } catch (error) {
+        console.log(error);
+        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
+    const token = await generarJWT(idUsuario, usuario.nombreApellido, usuario.email);
+
+    response.status(HTTP_STATUS_OK).json({
+        ok: true,
+        token: token
+    });
+}
+
 module.exports = {
     registrarUsuario,
     activeAccount,
     getRoles,
     login,
     googleLogin,
-    facebookLogin
+    facebookLogin,
+    generateRefreshToken
 }

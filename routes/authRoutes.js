@@ -5,7 +5,8 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
-const { registrarUsuario, activeAccount, getRoles, login, googleLogin, facebookLogin  } = require('../controllers/authController');
+const { validarJWT } = require('../middlewares/validarJwt');
+const { registrarUsuario, activeAccount, getRoles, login, googleLogin, facebookLogin, generateRefreshToken  } = require('../controllers/authController');
 const { forgotPassword, resetPassword } = require('../controllers/passwordController');
 
 const router = Router();
@@ -47,6 +48,12 @@ router.post("/facebook-signin", [
         validarCampos
     ],
     facebookLogin
+);
+
+router.post("/refresh-token", [
+        validarJWT
+    ],
+    generateRefreshToken
 );
 
 router.post("/password/forgot-password", [
