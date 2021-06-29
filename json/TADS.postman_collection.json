@@ -1,0 +1,342 @@
+{
+	"info": {
+		"_postman_id": "57efdb0c-156a-420f-8c6d-ae2ff02487ad",
+		"name": "TADS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "RegistrarUsuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombreApellido\": \"Usuario Test\",\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"telefono\": \"33445566\",\r\n    \"fechaNacimiento\": \"1990-01-01\",\r\n    \"genero\": \"M\",\r\n    \"biografia\": \"biografia test\",\r\n    \"hobbies\": \"jugar futbol\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarUsuarios",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwY2JmYWJlNGRjNzQzMWViMDRiNDM4MSIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoidXN1YXJpb3Rlc3QxQGdtYWlsLmNvbSIsImlhdCI6MTYyNDA1OTMwMSwiZXhwIjoxNjI0MTAyNTAxfQ.HGv4ybxhRJJxp3RM5X_zymOq64tI1NP2mlRJFS0wW04",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/usuarios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ActualizarUsuario",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "        {\r\n            \"google\": false,\r\n            \"facebook\": false,\r\n            \"nombreApellido\": \"Usuario Tester\",\r\n            \"email\": \"usuariotest1@gmail.com\",\r\n            \"telefono\": \"33445566\",\r\n            \"fechaNacimiento\": \"1990-01-01T00:00:00.000Z\",\r\n            \"genero\": \"M\",\r\n            \"biografia\": \"biografia test\",\r\n            \"hobbies\": \"jugar futbol\",\r\n            \"id\": \"60cbda14c9bfbf3d607751c0\"\r\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/usuarios/60cbda14c9bfbf3d607751c0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"usuarios",
+						"60cbda14c9bfbf3d607751c0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarUsuario",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/usuarios/60cbda14c9bfbf3d607751c0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"usuarios",
+						"60cbda14c9bfbf3d607751c0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"123456789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginGoogle",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5ZmUyYTdiNjc5NTIzOTYwNmNhMGE3NTA3OTRhN2JkOWZkOTU5NjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiMTAwNTQwNzY4ODgxOS1kanJubmcyYzhxN2FzazZmcnVyOTM4NDdsZTQ0ZXQ3di5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjEwMDU0MDc2ODg4MTktZGpybm5nMmM4cTdhc2s2ZnJ1cjkzODQ3bGU0NGV0N3YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDM4NjA2MDA4NjE5NTU1NjgyODUiLCJlbWFpbCI6Im5haHVlbHRhYmFzc29AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJILWVvTV9POVk1UHdDRnBxR2J3Z2FnIiwibmFtZSI6Ik5haHVlbCBUYWJhc3NvIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FBVFhBSnluNmN1MUlTY1J3SFJ6X2VodWEyeVlWUjhZcnREOXIxaFhGek1IPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6Ik5haHVlbCIsImZhbWlseV9uYW1lIjoiVGFiYXNzbyIsImxvY2FsZSI6ImVzIiwiaWF0IjoxNjI0MTMwMDk3LCJleHAiOjE2MjQxMzM2OTcsImp0aSI6IjFkZjEzYzFiZTc0MDA5ZjhlZWY5ZjhmNDUyMWI2NDYyNGU3ZmQ1NDYifQ.U_dbgltmCmTVu6eGFbI5Y_YaswPZuOZAUBRRE9k1IfWecpOBbamBGk3bzg8mqkWxwf57Wd7tu2o5fDRA9arBM3-xIsdV1TVeLe6tG7yly76RpP9nKiLuI9II4TB4IP4y1t0Avu8rnbk0iE-mGAXV1MPw86kIHu88n3aE7o6FNVDI5VEU001VOe_vKyR4RBQQ3zGNCL5zln25DZHDO77N7gdwKHwrFuG7QzprIhaAOGglDeD0FmJQa8pUcfddp8KcwtreYt0xX6wWQHRAmaqxpa4unbq2xnWfDcyiJ-tM08cQO8ZiILlZr1SKhPg4EZOzB6y8fWM7hIa4kNYVfLikxw\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/google-signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"google-signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ActivarCuenta",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/auth/active-account?token=pxyuBDJaqonaVNW5mC5jCuvIr4KF5iD9IGTP2NcBgCNM=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"active-account"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "pxyuBDJaqonaVNW5mC5jCuvIr4KF5iD9IGTP2NcBgCNM="
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SolicitarCambioPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/password/forgot-password?email=test@gmail.com&telefono=1243553",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"password",
+						"forgot-password"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "test@gmail.com"
+						},
+						{
+							"key": "telefono",
+							"value": "1243553"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RestablecerPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"resetToken\": \"3jjhjhfsjdhf832th843t43i43ijgi3jg3ig38583g3g3g3g\",\r\n    \"newPassword\": \"123456789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/password/reset-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"password",
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RefreshToken",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDEyMjJkMmJjNzJkMWQ0MDRlMDQ1OCIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoibmFodWVsdGFiYXNzb0BnbWFpbC5jb20iLCJpYXQiOjE2MjQ2NDE1MDAsImV4cCI6MTYyNDY0ODcwMH0.a0PYqAmnuTqoafOEcrrXgKXfcRmSQJ_XrnviHvFIgTI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/auth/refresh-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"auth",
+						"refresh-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EnvioWhatsapp ",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Wsp_Key",
+						"value": "dsgsdgs",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\": \"hola\",\r\n    \"to\" : \"+5493413609715\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/send-whatsapp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"send-whatsapp"
+					]
+				},
+				"description": "Api Desarrollada en Python con la libreria pywhatkit (Permite el envio de whatsapp gratuito a traves web.whatsapp.com)"
+			},
+			"response": []
+		}
+	]
+}

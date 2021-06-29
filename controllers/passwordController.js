@@ -14,9 +14,11 @@ const { generarToken } = require('../helpers/jwt');
 const { enviarEmail } = require('../helpers/emailService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const axios = require('axios');
 
 const forgotPassword = async(request, response = response) => {
     const emailUsuario = request.query.email;
+    const telefonoUsuario = request.query.telefono;
     if (!emailUsuario) {
         return response.status(HTTP_BAD_REQUEST).json({
             ok: false,
@@ -41,12 +43,28 @@ const forgotPassword = async(request, response = response) => {
         }
 
         // Al llegar hasta este punto el usuario existe en la base de datos
-        const mensaje = 'Revisar tu email para poder restablecer tu contraseña!';
-        let tokenVerification = await generarToken(usuario.id, usuario.email);
+        let tokenVerification = telefonoUsuario == null ? await generarToken(usuario.id, usuario.email) : getCodigo();
+
         // Asignamos el token al usuario y persistimos los cambios en la base de datos
         usuario.resetToken = tokenVerification;
         usuario = await Usuario.findByIdAndUpdate(usuario.id, usuario, { new: true });
+        console.log(usuario.resetToken)
 
+        if (telefonoUsuario != null) {
+            const message = 'El codigo para el restablecimiento de contraseña es ' + tokenVerification;
+            // Realizamos el request a la api
+            const data = await axios.post(process.env.WSP_URL, {
+                message: message,
+                to: telefonoUsuario
+            }, { headers: process.env.WSP_API_KEY });
+
+            if (data.status) {
+                return response.status(HTTP_STATUS_OK).json({
+                    ok: true,
+                    msg: 'WhatsApp enviado!'
+                });
+            }
+        }
         // Envio de email con token para solicitar cambio de contraseña
         const from = FROM_RESET_PASSWORD;
         const message = MESSAGE_RESET_PASSWORD;
@@ -68,7 +86,6 @@ const forgotPassword = async(request, response = response) => {
             msg: MSG_ERROR_ADMINISTRADOR
         });
     }
-
 }
 
 const resetPassword = async(request, response = response) => {
@@ -95,6 +112,8 @@ const resetPassword = async(request, response = response) => {
         // Encriptar la nueva contraseña del usuario
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(newPassword, salt);
+        // Volvemos a establecer el resetToken igual a null
+        usuario.resetToken = null;
         usuario = await Usuario.findByIdAndUpdate(usuario.id, usuario, { new: true });
         
         response.status(HTTP_STATUS_OK).json({
@@ -108,6 +127,17 @@ const resetPassword = async(request, response = response) => {
             msg: MSG_ERROR_ADMINISTRADOR
         });
     }
+}
+
+const getCodigo = () => {
+    let codigo = '';
+    for (let i = 0; i < 8; i++) {
+        let number = Math.floor(Math.random() * (9 - 0 + 1)) + 0;
+        codigo = codigo + number;
+    }
+    return codigo;
+
+
 }
 
 module.exports = {
