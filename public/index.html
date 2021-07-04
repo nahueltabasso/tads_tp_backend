@@ -32,5 +32,26 @@
         }
     </script>
     <!-- FIN GOOGLE SIGN-IN -->
+
+    <!-- INICIO GOOGLE RECAPTCHA V3 -->
+    <h1>reCAPTCHA v3</h1>
+    <input type="text" id="hello" value="Test recaptcha v3" />
+    <button type="button" id="send_button">Send</button>
+    <hr>
+    <div id="result"></div>
+
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdsSXUbAAAAAANcS50vKoCk3elwXAcLGlrZV03h"></script>
+    <script>
+        function showResult(text) {
+            document.querySelector('#result').innerHTML = text;
+        }
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LdsSXUbAAAAAANcS50vKoCk3elwXAcLGlrZV03h', {action: 'demo'})
+                .then(function(token) {
+                    document.querySelector('#send_button').addEventListener('click', console.log('TOKEN RECAPTCHA: \n', token));
+                });
+        });
+    </script>
+    <!-- FIN GOOGLE RECAPTCHA v3 -->
 </body>
 </html>

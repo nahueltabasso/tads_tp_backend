@@ -8,6 +8,7 @@ const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
 const { registrarUsuario, activeAccount, getRoles, login, googleLogin, facebookLogin, generateRefreshToken  } = require('../controllers/authController');
 const { forgotPassword, resetPassword } = require('../controllers/passwordController');
+const { verifyGoogleRecaptcha } = require('../middlewares/validarRecaptcha');
 
 const router = Router();
 
@@ -18,7 +19,8 @@ router.post('/signup', [
     check('password', 'La contraseña es requerida').not().isEmpty(),
     check('fechaNacimiento', 'La fecha de nacimiento es requerida').not().isEmpty(),
     check('genero', 'El genero es requerido').not().isEmpty(),
-    validarCampos
+    validarCampos,
+    verifyGoogleRecaptcha,
     ],
     registrarUsuario
 );
