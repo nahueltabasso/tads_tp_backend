@@ -59,6 +59,10 @@ const UsuarioSchema = Schema({
         ref: 'Rol',
         require: true
     },
+    pais: {
+        type: String,
+        require: true
+    },
     tokenActivacion: {
         type: String,
         require: true
