@@ -21,6 +21,8 @@ app.use(express.static('public'));
 // Paths
 app.use('/api/usuarios', require('./routes/usuarioRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/publicacion', require('./routes/publicacionRoutes'));
+app.use('/api/file', require('./routes/fileRoutes'));
 
 app.listen(process.env.PORT, () => {
     console.log('Servidor corriendo en puerto: ' + process.env.PORT);
