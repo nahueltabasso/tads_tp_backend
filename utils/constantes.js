@@ -10,6 +10,7 @@ const HTTP_UNAUTHORIZED = 401;
 const ROLE_USER = 'ROLE_USER';
 
 const MSG_ERROR_ADMINISTRADOR = 'Error inesperado... Consultar con el Administrador';
+const EXTENSIONES_VALIDAS = ['png', 'jpg', 'jpeg', 'gif'];
 
 module.exports = {
     HTTP_STATUS_OK,
@@ -20,5 +21,6 @@ module.exports = {
     HTTP_NOT_FOUND,
     HTTP_INTERNAL_SERVER_ERROR,
     ROLE_USER,
-    MSG_ERROR_ADMINISTRADOR
+    MSG_ERROR_ADMINISTRADOR,
+    EXTENSIONES_VALIDAS
 }

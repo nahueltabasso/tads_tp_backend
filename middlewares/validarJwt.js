@@ -12,7 +12,7 @@ const validarJWT = (request, response, next) => {
     }
 
     try {
-        const { id, nombreApellido, email } = jwt.verify(token, process.env.JWT_SECRET);
+        const { id, nombre, email } = jwt.verify(token, process.env.JWT_SECRET)
         request.id = id;
         next();
     } catch (error) {

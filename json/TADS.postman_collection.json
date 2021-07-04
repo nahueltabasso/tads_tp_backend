@@ -20,7 +20,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/auth/signup",
+					"raw": "http://localhost:3000/api/auth/signup?recaptcha=03AGdBq26uVywqNSynZ1i4MZvKHb5pFnh3ESLioDWIkDQLEGGBB2d-PdRxARiTk8y1B-18R8Z2KjUEAb--sk9upDljkbJ96Q_B2KGO9PZprIZm4Ucj47khTUjFyGees1YpH3nsKBC5iqjsb5Ffok-tDL6-wAY9DCwquZPffDiO5HQCRYkXK6B51TOAnT2ebfkhHK0-HUoNBIDuf0ReGQmowTHe2zQWKpQ7yYNPTycxpK9pC9-AaeAht318vtYGN52qurx1QJl3DuSszRQQjZjjTrzv5Xnn44VmIw9-2wSSxebuNHnKXvoGcmspQjd8VIm-OZv1EmgayZxNftrjFzeU8yT6lck-Lno5dbst4udIDsTRyzQaX_40jlg7lJnPftj-Jt8MW8gDzIMtabgYM6I-oRknfMVdSJZMn2P1n1JVRIzukaW8Q7y9Wmm0MNoonMiNgnR4mfXHnpjV",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -30,6 +30,12 @@
 						"api",
 						"auth",
 						"signup"
+					],
+					"query": [
+						{
+							"key": "recaptcha",
+							"value": "03AGdBq26uVywqNSynZ1i4MZvKHb5pFnh3ESLioDWIkDQLEGGBB2d-PdRxARiTk8y1B-18R8Z2KjUEAb--sk9upDljkbJ96Q_B2KGO9PZprIZm4Ucj47khTUjFyGees1YpH3nsKBC5iqjsb5Ffok-tDL6-wAY9DCwquZPffDiO5HQCRYkXK6B51TOAnT2ebfkhHK0-HUoNBIDuf0ReGQmowTHe2zQWKpQ7yYNPTycxpK9pC9-AaeAht318vtYGN52qurx1QJl3DuSszRQQjZjjTrzv5Xnn44VmIw9-2wSSxebuNHnKXvoGcmspQjd8VIm-OZv1EmgayZxNftrjFzeU8yT6lck-Lno5dbst4udIDsTRyzQaX_40jlg7lJnPftj-Jt8MW8gDzIMtabgYM6I-oRknfMVdSJZMn2P1n1JVRIzukaW8Q7y9Wmm0MNoonMiNgnR4mfXHnpjV"
+						}
 					]
 				}
 			},
@@ -42,7 +48,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwY2JmYWJlNGRjNzQzMWViMDRiNDM4MSIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoidXN1YXJpb3Rlc3QxQGdtYWlsLmNvbSIsImlhdCI6MTYyNDA1OTMwMSwiZXhwIjoxNjI0MTAyNTAxfQ.HGv4ybxhRJJxp3RM5X_zymOq64tI1NP2mlRJFS0wW04",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDEyMjJkMmJjNzJkMWQ0MDRlMDQ1OCIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoibmFodWVsdGFiYXNzb0BnbWFpbC5jb20iLCJpYXQiOjE2MjUxOTI0MDEsImV4cCI6MTYyNTE5OTYwMX0.0sq-xPVd4Ry8pAmqQ33O-terwX6NGai4RDA0Ut872hA",
 						"type": "text"
 					}
 				],
@@ -335,6 +341,209 @@
 					]
 				},
 				"description": "Api Desarrollada en Python con la libreria pywhatkit (Permite el envio de whatsapp gratuito a traves web.whatsapp.com)"
+			},
+			"response": []
+		},
+		{
+			"name": "RegistrarPublicacion",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDEyMjJkMmJjNzJkMWQ0MDRlMDQ1OCIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoibmFodWVsdGFiYXNzb0BnbWFpbC5jb20iLCJpYXQiOjE2MjUzNDg1MDEsImV4cCI6MTYyNTM1NTcwMX0.GGq5dkXBJrTZDwnNT5C4BDWtUrAa2cFOJOQreRP0c_E",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/nahuel/Pictures/Error1.jpg"
+						},
+						{
+							"key": "data",
+							"value": "{\"titulo\": \"POST1\",\"descripcion\": \"Descripcion test\",\"usuario\": \"60d1222d2bc72d1d404e0458\"}",
+							"contentType": "application/json",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "titulo",
+							"value": "POST1",
+							"type": "text"
+						},
+						{
+							"key": "descripcion",
+							"value": "Test",
+							"type": "text"
+						},
+						{
+							"key": "usuario",
+							"value": "60d1222d2bc72d1d404e0458",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/publicacion/publicaciones",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"publicacion",
+						"publicaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VerArchivo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/file/perfiles/r4t4g4ggrgg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"file",
+						"perfiles",
+						"r4t4g4ggrgg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarPublicacion",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDEyMjJkMmJjNzJkMWQ0MDRlMDQ1OCIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoibmFodWVsdGFiYXNzb0BnbWFpbC5jb20iLCJpYXQiOjE2MjUzNDg1MDEsImV4cCI6MTYyNTM1NTcwMX0.GGq5dkXBJrTZDwnNT5C4BDWtUrAa2cFOJOQreRP0c_E",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/publicacion/60e0dcaa207f471ed8717b66",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"publicacion",
+						"60e0dcaa207f471ed8717b66"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ActualizarPublicacion",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDEyMjJkMmJjNzJkMWQ0MDRlMDQ1OCIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoibmFodWVsdGFiYXNzb0BnbWFpbC5jb20iLCJpYXQiOjE2MjUzNDg1MDEsImV4cCI6MTYyNTM1NTcwMX0.GGq5dkXBJrTZDwnNT5C4BDWtUrAa2cFOJOQreRP0c_E",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"titulo\": \"Update\",\r\n    \"descripcion\": \"descripcion Update\",\r\n    \"usuario\": \"60d1222d2bc72d1d404e0458\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/publicacion/60e0e003e09e0333b8ec0bfc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"publicacion",
+						"60e0e003e09e0333b8ec0bfc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VerPublicacionById",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDEyMjJkMmJjNzJkMWQ0MDRlMDQ1OCIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoibmFodWVsdGFiYXNzb0BnbWFpbC5jb20iLCJpYXQiOjE2MjUzNDg1MDEsImV4cCI6MTYyNTM1NTcwMX0.GGq5dkXBJrTZDwnNT5C4BDWtUrAa2cFOJOQreRP0c_E",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/publicacion/60e0e003e09e0333b8ec0bfc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"publicacion",
+						"60e0e003e09e0333b8ec0bfc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarPublicacionesByUsuario",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDEyMjJkMmJjNzJkMWQ0MDRlMDQ1OCIsIm5vbWJyZSI6IlVzdWFyaW8gVGVzdCIsImVtYWlsIjoibmFodWVsdGFiYXNzb0BnbWFpbC5jb20iLCJpYXQiOjE2MjUzNDg1MDEsImV4cCI6MTYyNTM1NTcwMX0.GGq5dkXBJrTZDwnNT5C4BDWtUrAa2cFOJOQreRP0c_E",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/publicacion/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"publicacion",
+						""
+					]
+				}
 			},
 			"response": []
 		}
