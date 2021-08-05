@@ -13,9 +13,10 @@ const {
 const { googleVerify } = require('../helpers/googleVerify');
 const { enviarEmail } = require('../helpers/emailService');
 const { hashString } = require('../utils/hash');
+const { getMenu } = require('../helpers/menu');
 
 const registrarUsuario = async(request, response = response) => {
-    const { nombreApellido, email, password, telefono, fechaNacimiento, genero, biografia, hobbies } = request.body;
+    const { nombreApellido, email, password, telefono, fechaNacimiento, genero, biografia, hobbies, primerLogin } = request.body;
     try {
         // Validamos si ya existe un usuario con el email del request
         const existeUsuario = await Usuario.findOne({ email: email });
@@ -52,18 +53,14 @@ const registrarUsuario = async(request, response = response) => {
         // Envio de email para activacion de cuenta
         const emailStatus = enviarEmail('Registracion Exitosa!', usuario.email,
             'Haga click en el enlase para activar su cuenta!',
-            `${process.env.CLIENT_PATH}/activar-cuenta?token=${tokenActivacion}`);
+            `${process.env.CLIENT_PATH}/active-account?token=${tokenActivacion}`);
         if (!emailStatus) {
             throw Error('Ocurrio un error con el envio del Email');
         }
 
-        // Generamos el JWT (Json Web Token)
-        const token = await generarJWT(usuario.id, usuario.nombreApellido, usuario.email);
-
         response.status(HTTP_CREATED).json({
             ok: true,
             usuario: usuario,
-            token: token
         });
     } catch (error) {
         console.log("Ocurrio un error: ", error);
@@ -78,7 +75,7 @@ const activeAccount = async(request, response = response) => {
     const tokenActivacion = request.query.token;
     try {
         if (tokenActivacion) {
-            const usuarioDB = await Usuario.findOne({ tokenActivacion: tokenActivacion });
+            const usuarioDB = await Usuario.findOne({ tokenActivacion: tokenActivacion }).populate('rol', 'nombreRol');
             if (!usuarioDB) {
                 return response.status(HTTP_NOT_FOUND).json({
                     ok: false,
@@ -124,7 +121,8 @@ const login = async(request, response = response) => {
     const { email, password } = request.body;
     try {
         // Verificamos el email
-        const usuario = await Usuario.findOne({ email: email });
+        let usuario = await Usuario.findOne({ email: email }).populate('rol', 'nombreRol');
+        console.log(usuario);
         if (!usuario) {
             return response.status(HTTP_NOT_FOUND).json({
                 ok: false,
@@ -141,12 +139,31 @@ const login = async(request, response = response) => {
             });
         }
 
+        // Validamos que el usuario este activado
+        if (!usuario.estado) {
+            return response.status(HTTP_BAD_REQUEST).json({
+                ok: false,
+                msg: 'El usuario esta inactivo! Revisar email'
+            });
+        }
+
         // Generamos el JWT (Json Web Token)
         const token = await generarJWT(usuario.id, usuario.nombreApellido, usuario.email);
 
+        // Validamos si es la primera vez que el usuario ingresa a la aplicacion
+        let primerLogin = false;
+        if (usuario.primerLogin === 0) {
+            primerLogin = true;
+            usuario.primerLogin++;
+        }
+        usuario = await Usuario.findByIdAndUpdate(usuario.id, usuario, { new: true }).populate('rol', 'nombreRol');
+        console.log(usuario)
+
         response.status(HTTP_STATUS_OK).json({
             ok: true,
-            token: token
+            token: token,
+            usuario: usuario,
+            primerLogin: primerLogin
         });
     } catch (error) {
         console.log(error);
@@ -164,7 +181,7 @@ const googleLogin = async(request, response = response) => {
         const { name, email, picture } = await googleVerify(googleToken);
 
         // Validamos si existe un usuario con el email
-        const usuarioDB = await Usuario.findOne({ email });
+        const usuarioDB = await Usuario.findOne({ email }).populate('rol', 'nombreRol');
         let usuario;
         if (!usuarioDB) {
             // Si no existe el usuario en la base de datos
@@ -187,6 +204,7 @@ const googleLogin = async(request, response = response) => {
             usuario.google = true;
             usuario.password = '@@@@@@@@@@@@';
         }
+        usuario.primerLogin++;
 
         // Persistimos los cambios en la base de datos;
         await usuario.save();
@@ -195,7 +213,8 @@ const googleLogin = async(request, response = response) => {
         const token = await generarJWT(usuario.id, usuario.nombreApellido, usuario.email);
         response.status(HTTP_STATUS_OK).json({
             ok: true,
-            token: token
+            token: token,
+            usuario: usuario
         });
     } catch (error) {
         console.log(error);
@@ -214,7 +233,7 @@ const generateRefreshToken = async(request, response = response) => {
     const idUsuario = request.id;
     let usuario;
     try {
-        usuario = await Usuario.findById(idUsuario);
+        usuario = await Usuario.findById(idUsuario).populate('rol', 'nombreRol');
     } catch (error) {
         console.log(error);
         response.status(HTTP_INTERNAL_SERVER_ERROR).json({
@@ -226,8 +245,35 @@ const generateRefreshToken = async(request, response = response) => {
 
     response.status(HTTP_STATUS_OK).json({
         ok: true,
-        token: token
+        token: token,
+        usuario: usuario
     });
+}
+
+const getMenuUsuarioLogueado = async(request, response = Response) => {
+    const nombreRol = request.params.nombreRol;
+
+    try {
+        const rol = await Rol.findOne({ nombreRol: nombreRol });
+        if (!rol) {
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No se encontro el rol del usuario'
+            });
+        }
+
+        // Existe el rol en la base de datos por lo tanto devolvemos el menu al cliente
+        response.status(HTTP_STATUS_OK).json({
+            ok: true,
+            menu: getMenu(rol)
+        });
+    } catch (error) {
+        console.log(error);
+        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
 }
 
 module.exports = {
@@ -237,5 +283,6 @@ module.exports = {
     login,
     googleLogin,
     facebookLogin,
-    generateRefreshToken
+    generateRefreshToken,
+    getMenuUsuarioLogueado
 }

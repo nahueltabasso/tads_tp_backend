@@ -5,7 +5,7 @@ const { getFile } = require('../helpers/uploadFileService');
 
 const viewFile = async(request, response = response) => {
     const tipo = request.params.tipo;
-    const file = request.params.tipo;
+    const file = request.params.file;
 
     const tiposValidos = ['publicaciones', 'perfiles'];
     if (!tiposValidos.includes(tipo)) {

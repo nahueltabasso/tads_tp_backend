@@ -31,6 +31,12 @@ const UsuarioSchema = Schema({
     biografia: {
         type: String
     },
+    situacionSentimental: {
+        type: String
+    },
+    telefono: {
+        type: String
+    },
     hobbies: {
         type: String
     },
@@ -69,6 +75,10 @@ const UsuarioSchema = Schema({
     },
     resetToken: {
         type: String
+    },
+    primerLogin: {
+        type: Number,
+        default: 0
     }
 });
 

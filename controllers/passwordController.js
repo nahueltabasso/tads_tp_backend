@@ -68,7 +68,7 @@ const forgotPassword = async(request, response = response) => {
         // Envio de email con token para solicitar cambio de contraseña
         const from = FROM_RESET_PASSWORD;
         const message = MESSAGE_RESET_PASSWORD;
-        const link = `${process.env.CLIENT_PATH}/restablecer-password?token=${tokenVerification}`;
+        const link = `${process.env.CLIENT_PATH}/reset-password?token=${tokenVerification}`;
         const emailStatus = enviarEmail(from, usuario.email, message, link);
 
         if (!emailStatus) {

@@ -6,7 +6,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { registrarUsuario, activeAccount, getRoles, login, googleLogin, facebookLogin, generateRefreshToken  } = require('../controllers/authController');
+const { registrarUsuario, activeAccount, getRoles, login, googleLogin, facebookLogin, generateRefreshToken, getMenuUsuarioLogueado  } = require('../controllers/authController');
 const { forgotPassword, resetPassword } = require('../controllers/passwordController');
 const { verifyGoogleRecaptcha } = require('../middlewares/validarRecaptcha');
 
@@ -52,7 +52,7 @@ router.post("/facebook-signin", [
     facebookLogin
 );
 
-router.post("/refresh-token", [
+router.get("/refresh-token", [
         validarJWT
     ],
     generateRefreshToken
@@ -69,5 +69,7 @@ router.post("/password/forgot-password", [
 router.post("/password/reset-password", validarCampos, resetPassword);
 
 router.get('/getRoles', getRoles);
+
+router.get('/getMenuUsuarioLogueado/:nombreRol', validarJWT, getMenuUsuarioLogueado);
 
 module.exports = router;
