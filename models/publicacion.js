@@ -22,12 +22,12 @@ const PublicacionSchema = Schema({
         ref: 'Usuario',
         require: true
     }
-});
+}, { collection: 'publicaciones' });
 
 PublicacionSchema.method('toJSON', function (){
     const { __v, _id, password, ...object } = this.toObject();
     object.id = _id;
     return object;
-}, { collection: 'publicaciones' });
+});
 
 module.exports = model('Publicacion', PublicacionSchema);
