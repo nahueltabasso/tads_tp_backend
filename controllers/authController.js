@@ -191,7 +191,7 @@ const googleLogin = async(request, response = response) => {
                 nombreApellido: name,
                 email: email,
                 password: '@@@@@@@@@@@@@',
-                srcImg: picture,
+                srcImagen: picture,
                 fechaNacimiento: new Date(),
                 rol: rol,
                 genero: 'M',

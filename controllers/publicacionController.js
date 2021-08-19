@@ -170,7 +170,7 @@ const findAllByUsuario = async(request, response = response) => {
     const idUsuarioLogueado = request.id;
 
     try {
-        const publicaciones = await Publicacion.find({ 'usuario': idUsuarioLogueado });
+        const publicaciones = await Publicacion.find({ 'usuario': idUsuarioLogueado }).sort({ 'createAt': -1 });
         response.status(HTTP_STATUS_OK).json({
             ok: true,
             publicaciones: publicaciones

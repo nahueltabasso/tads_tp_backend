@@ -36,7 +36,6 @@ const updateUsuario = async(request, response = response) => {
         }
 
         const body = request.body;
-        console.log(body);
         if (usuarioDB.email !== body.email) {
             existeEmail = await Usuario.findOne({ email: email });
             if (existeEmail) {
@@ -174,9 +173,11 @@ const updateProfilePhoto = async(request, response = response) => {
         uploadFile(file, tipo, usuario);
 
         const usuarioActualizado = await Usuario.findByIdAndUpdate(idUsuario, usuario, { new: true });
+        const nombreArchivo = usuarioActualizado.srcImagen;
         response.status(HTTP_CREATED).json({
             ok: true,
-            usuario: usuarioActualizado
+            usuario: usuarioActualizado,
+            nombreArchivo: nombreArchivo
         });
     } catch (error) {
         console.error(error);
