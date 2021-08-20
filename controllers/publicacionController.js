@@ -1,9 +1,30 @@
+/*
+_________ _______  ______   _______       _______  _______  ______       _______  _______  _______ _________ _______  _
+\__   __/(  ___  )(  __  \ (  ____ \     (  ____ )(  ____ \(  __  \     (  ____ \(  ___  )(  ____ \\__   __/(  ___  )( \
+   ) (   | (   ) || (  \  )| (    \/     | (    )|| (    \/| (  \  )    | (    \/| (   ) || (    \/   ) (   | (   ) || (
+   | |   | (___) || |   ) || (_____      | (____)|| (__    | |   ) |    | (_____ | |   | || |         | |   | (___) || |
+   | |   |  ___  || |   | |(_____  )     |     __)|  __)   | |   | |    (_____  )| |   | || |         | |   |  ___  || |
+   | |   | (   ) || |   ) |      ) |     | (\ (   | (      | |   ) |          ) || |   | || |         | |   | (   ) || |
+   | |   | )   ( || (__/  )/\____) |     | ) \ \__| (____/\| (__/  )    /\____) || (___) || (____/\___) (___| )   ( || (____/\
+   )_(   |/     \|(______/ \_______)_____|/   \__/(_______/(______/_____\_______)(_______)(_______/\_______/|/     \|(_______/
+                                   (_____)                        (_____)
+    ##############################################################################################
+    # Se encarga de dar respuesta a las peticiones relacionadas con las publicaciones de la app  #
+    ##############################################################################################
+
+*/
+
 const { response } = require('express');
 const { HTTP_UNAUTHORIZED, HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST, HTTP_NOT_FOUND, HTTP_NOT_CONTENT, HTTP_STATUS_OK } = require('../utils/constantes');
 const { MSG_ERROR_ADMINISTRADOR } = require('../utils/mensajes');
 const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
 const Publicacion = require('../models/publicacion');
 
+/*
+    ########## REGISTRAR PUBLICACION ##########
+
+    Registra y retorna la publicacion creada
+ */
 const registarPublicacion = async(request, response = response) => {
     let body = request.body;
     const idUsuarioLogueado = request.id;
@@ -61,6 +82,11 @@ const registarPublicacion = async(request, response = response) => {
     }
 }
 
+/*
+    ########## ELIMINAR PUBLICACION ##########
+
+    Elimina publicacion por id
+ */
 const deletePublicacion = async(request, response = response) => {
     const idPublicacion = request.params.id;
 
@@ -101,6 +127,11 @@ const deletePublicacion = async(request, response = response) => {
     }
 }
 
+/*
+    ########## ACTUALIZAR PUBLICACION ##########
+
+    Actualiza publicacion por id y retorna la publicacion actualizada
+ */
 const updatePublicacion = async(request, response = response) => {
     const idPublicacion = request.params.id;
     const { titulo, descripcion } = request.body;
@@ -140,6 +171,11 @@ const updatePublicacion = async(request, response = response) => {
     }
 }
 
+/*
+    ########## OBTENER PUBLICACION POR ID ##########
+
+    Retorna una publicacion segun id
+ */
 const getById = async(request, response = response) => {
     const idPublicacion = request.params.id;
 
@@ -165,6 +201,11 @@ const getById = async(request, response = response) => {
     }
 }
 
+/*
+    ########## OBTENER PUBLICACIONES USUARIO LOGUEADO ##########
+
+    Retorna las publiaciones segun el id usuario del auth_token del header del request
+ */
 const findAllByUsuario = async(request, response = response) => {
     console.log("Entra a findAllByUsuario()");
     const idUsuarioLogueado = request.id;

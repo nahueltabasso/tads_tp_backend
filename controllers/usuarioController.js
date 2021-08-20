@@ -1,3 +1,19 @@
+/*
+_________ _______  ______   _______       _______  _______  ______       _______  _______  _______ _________ _______  _
+\__   __/(  ___  )(  __  \ (  ____ \     (  ____ )(  ____ \(  __  \     (  ____ \(  ___  )(  ____ \\__   __/(  ___  )( \
+   ) (   | (   ) || (  \  )| (    \/     | (    )|| (    \/| (  \  )    | (    \/| (   ) || (    \/   ) (   | (   ) || (
+   | |   | (___) || |   ) || (_____      | (____)|| (__    | |   ) |    | (_____ | |   | || |         | |   | (___) || |
+   | |   |  ___  || |   | |(_____  )     |     __)|  __)   | |   | |    (_____  )| |   | || |         | |   |  ___  || |
+   | |   | (   ) || |   ) |      ) |     | (\ (   | (      | |   ) |          ) || |   | || |         | |   | (   ) || |
+   | |   | )   ( || (__/  )/\____) |     | ) \ \__| (____/\| (__/  )    /\____) || (___) || (____/\___) (___| )   ( || (____/\
+   )_(   |/     \|(______/ \_______)_____|/   \__/(_______/(______/_____\_______)(_______)(_______/\_______/|/     \|(_______/
+                                   (_____)                        (_____)
+    ###################################################################################
+    # Se encarga de dar respuesta a las peticiones relacionadas con los usuarios      #
+    ###################################################################################
+
+*/
+
 const { response } = require('express');
 const Usuario = require('../models/usuario');
 const {
@@ -12,6 +28,12 @@ const {
 } = require("../utils/constantes");
 const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
 
+/*
+    ########## LISTAR USUARIOS ##########
+
+    Retorna todos los usuarios registrados en la aplicacion
+    Nota -> Debe tener rol ROLE_ADMIN
+ */
 const getAll = async(request, response) => {
     console.log('ID Usuario logueado : ', request.id);
     const usuarios = await Usuario.find({}, 'nombreApellido email telefono fechaNacimiento genero srcImagen biografia hobbies google facebook');
@@ -22,6 +44,11 @@ const getAll = async(request, response) => {
     });
 };
 
+/*
+    ########## ACTUALIZAR USUARIO ##########
+
+    Actualiza los datos de un usuario mediante su id
+ */
 const updateUsuario = async(request, response = response) => {
     console.log('ID Usuario logueado : ', request.id);
     const id = request.params.id;
@@ -63,6 +90,11 @@ const updateUsuario = async(request, response = response) => {
     }
 }
 
+/*
+    ########## ELIMINAR USUARIO ##########
+
+    Elimina un usuario por su id
+ */
 const deleteUsuario = async(request, response = response) => {
     console.log('ID Usuario logueado : ', request.id);
     const id = request.params.id;
@@ -93,6 +125,11 @@ const deleteUsuario = async(request, response = response) => {
     }
 }
 
+/*
+    ########## OBTENER ESTADOS SENTIMENTALES ##########
+
+    Retorna los estados para completar el perfil o modificar los datos personales
+ */
 const getEstadosSentimentales = (request, response = response) => {
     const estados = ['Soltero/a', 'En una relacion', 'Casado/a', 'Otro'];
 
@@ -102,6 +139,11 @@ const getEstadosSentimentales = (request, response = response) => {
     });
 }
 
+/*
+    ########## OBTENER USUARIO BY ID ##########
+
+    Retorna un usuario segun su id
+ */
 const getUsuarioById = async(request, response = response) => {
     const idUsuario = request.params.id;
     let usuario;
@@ -127,6 +169,11 @@ const getUsuarioById = async(request, response = response) => {
     }
 }
 
+/*
+    ########## ACTUALIZAR FOTO ##########
+
+    Actualiza foto de perfil del usuario segun id, retorna el usuario actualizado
+ */
 const updateProfilePhoto = async(request, response = response) => {
     const idUsuario = request.params.id;
     const tipo = request.params.tipo;

@@ -1,3 +1,19 @@
+/*
+_________ _______  ______   _______       _______  _______  ______       _______  _______  _______ _________ _______  _
+\__   __/(  ___  )(  __  \ (  ____ \     (  ____ )(  ____ \(  __  \     (  ____ \(  ___  )(  ____ \\__   __/(  ___  )( \
+   ) (   | (   ) || (  \  )| (    \/     | (    )|| (    \/| (  \  )    | (    \/| (   ) || (    \/   ) (   | (   ) || (
+   | |   | (___) || |   ) || (_____      | (____)|| (__    | |   ) |    | (_____ | |   | || |         | |   | (___) || |
+   | |   |  ___  || |   | |(_____  )     |     __)|  __)   | |   | |    (_____  )| |   | || |         | |   |  ___  || |
+   | |   | (   ) || |   ) |      ) |     | (\ (   | (      | |   ) |          ) || |   | || |         | |   | (   ) || |
+   | |   | )   ( || (__/  )/\____) |     | ) \ \__| (____/\| (__/  )    /\____) || (___) || (____/\___) (___| )   ( || (____/\
+   )_(   |/     \|(______/ \_______)_____|/   \__/(_______/(______/_____\_______)(_______)(_______/\_______/|/     \|(_______/
+                                   (_____)                        (_____)
+    ###################################################################################
+    # Se encarga de dar respuesta a las peticiones relacionadas al password           #
+    ###################################################################################
+
+*/
+
 const { response } = require('express');
 const {
     HTTP_BAD_REQUEST,
@@ -16,6 +32,11 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
 
+/*
+    ########## SOLICITAR CAMBIO DE PASSWORD ##########
+
+    Genera y envia email con el token para el seteo de password
+ */
 const forgotPassword = async(request, response = response) => {
     const emailUsuario = request.query.email;
     const telefonoUsuario = request.query.telefono;
@@ -88,6 +109,11 @@ const forgotPassword = async(request, response = response) => {
     }
 }
 
+/*
+    ########## MODIFICAR PASSWORD ##########
+
+    Encripta y actualiza el usuario con la nueva password
+ */
 const resetPassword = async(request, response = response) => {
     const { newPassword, resetToken } = request.body;
     if (!(resetToken && newPassword)) {

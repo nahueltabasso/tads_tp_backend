@@ -1,3 +1,19 @@
+/*
+_________ _______  ______   _______       _______  _______  ______       _______  _______  _______ _________ _______  _
+\__   __/(  ___  )(  __  \ (  ____ \     (  ____ )(  ____ \(  __  \     (  ____ \(  ___  )(  ____ \\__   __/(  ___  )( \
+   ) (   | (   ) || (  \  )| (    \/     | (    )|| (    \/| (  \  )    | (    \/| (   ) || (    \/   ) (   | (   ) || (
+   | |   | (___) || |   ) || (_____      | (____)|| (__    | |   ) |    | (_____ | |   | || |         | |   | (___) || |
+   | |   |  ___  || |   | |(_____  )     |     __)|  __)   | |   | |    (_____  )| |   | || |         | |   |  ___  || |
+   | |   | (   ) || |   ) |      ) |     | (\ (   | (      | |   ) |          ) || |   | || |         | |   | (   ) || |
+   | |   | )   ( || (__/  )/\____) |     | ) \ \__| (____/\| (__/  )    /\____) || (___) || (____/\___) (___| )   ( || (____/\
+   )_(   |/     \|(______/ \_______)_____|/   \__/(_______/(______/_____\_______)(_______)(_______/\_______/|/     \|(_______/
+                                   (_____)                        (_____)
+    ###################################################################################
+    # Se encarga de dar respuesta a las peticiones relacionadas con la autenticacion  #
+    ###################################################################################
+
+*/
+
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
@@ -15,6 +31,11 @@ const { enviarEmail } = require('../helpers/emailService');
 const { hashString } = require('../utils/hash');
 const { getMenu } = require('../helpers/menu');
 
+/*
+    ########## REGISTRAR USUARIO ##########
+
+    Registra, genera token de activacion y retorna el usuario creado
+ */
 const registrarUsuario = async(request, response = response) => {
     const { nombreApellido, email, password, telefono, fechaNacimiento, genero, biografia, hobbies, primerLogin } = request.body;
     try {
@@ -71,6 +92,11 @@ const registrarUsuario = async(request, response = response) => {
     }
 }
 
+/*
+    ########## ACTIVAR CUENTA ##########
+
+    Activa la cuenta mediante el token y retorna el usuario actualizado
+ */
 const activeAccount = async(request, response = response) => {
     const tokenActivacion = request.query.token;
     try {
@@ -101,6 +127,11 @@ const activeAccount = async(request, response = response) => {
     }
 }
 
+/*
+    ########## OBTENER ROLES ##########
+
+    Retorna los roles de la app
+ */
 const getRoles = async(request, response = response) => {
     try {
         const roles = await Rol.find();
@@ -117,6 +148,11 @@ const getRoles = async(request, response = response) => {
     }
 }
 
+/*
+    ########## LOGIN APP ##########
+
+    Valida y retorna usuario, token
+ */
 const login = async(request, response = response) => {
     const { email, password } = request.body;
     try {
@@ -174,6 +210,11 @@ const login = async(request, response = response) => {
     }
 }
 
+/*
+    ########## GOOGLE SIGN IN ##########
+
+    Autenticacion con google
+ */
 const googleLogin = async(request, response = response) => {
     const googleToken = request.body.token
     try {
@@ -225,10 +266,20 @@ const googleLogin = async(request, response = response) => {
     }
 }
 
+/*
+    ########## FACEBOOK SIGN IN ##########
+
+    Servicio aun no desarrollado
+ */
 const facebookLogin = async(request, response = response) => {
     console.log('Facebook Auth');
 }
 
+/*
+    ########## GET REFRESH TOKEN ##########
+
+    Retorna usuario y un nuevo token
+ */
 const generateRefreshToken = async(request, response = response) => {
     const idUsuario = request.id;
     let usuario;
@@ -250,6 +301,11 @@ const generateRefreshToken = async(request, response = response) => {
     });
 }
 
+/*
+    ########## GET MENU ##########
+
+    Retorna el menu segun el rol del usuario
+ */
 const getMenuUsuarioLogueado = async(request, response = Response) => {
     const nombreRol = request.params.nombreRol;
 
