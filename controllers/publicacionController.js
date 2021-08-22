@@ -208,7 +208,7 @@ const getById = async(request, response = response) => {
  */
 const findAllByUsuario = async(request, response = response) => {
     console.log("Entra a findAllByUsuario()");
-    const idUsuarioLogueado = request.id;
+    const idUsuarioLogueado = request.params.idUsuario;
 
     try {
         const publicaciones = await Publicacion.find({ 'usuario': idUsuarioLogueado }).sort({ 'createAt': -1 });

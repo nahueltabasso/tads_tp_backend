@@ -8,41 +8,35 @@ _________ _______  ______   _______       _______  _______  ______       _______
    | |   | )   ( || (__/  )/\____) |     | ) \ \__| (____/\| (__/  )    /\____) || (___) || (____/\___) (___| )   ( || (____/\
    )_(   |/     \|(______/ \_______)_____|/   \__/(_______/(______/_____\_______)(_______)(_______/\_______/|/     \|(_______/
                                    (_____)                        (_____)
-    PATH: /api/usuarios
+    PATH: /api/solicitudes
 
 */
 
 const { Router } = require('express');
 const { check } = require('express-validator');
-const expressFileUpload = require('express-fileupload');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { getAll, updateUsuario, deleteUsuario, getEstadosSentimentales, getUsuarioById, updateProfilePhoto, search } = require('../controllers/usuarioController');
+const { enviarSolicitudAmistad, obtenerSolicitudesPendientesUsuarioLogueado, aceptarSolicitud, rechazarSolicitud } = require('../controllers/solicitudAmistadController');
 
 const router = Router();
-// Lectura y parseo del body
-router.use(expressFileUpload());
 
-router.get('/', validarJWT, getAll);
-
-router.put('/:id', [
-    validarJWT,
-    check('nombreApellido', 'El nombre es requerido').not().isEmpty(),
-    check('email', 'El email es requerido').not().isEmpty(),
-    check('genero', 'El genero es requerido').not().isEmpty(),
-    validarCampos
+router.post('/enviar-solicitud', [
+        validarJWT,
+        check('emailEmisor', 'El email del emisor de la solicitud es requerido').not().isEmpty(),
+        check('emailEmisor', 'Email no valido').isEmail(),
+        check('usuarioEmisor', 'Usuario emisor no valido').isMongoId(),
+        check('emailReceptor', 'El email del receptor de la solicitud es requerido').not().isEmpty(),
+        check('emailReceptor', 'Email no valido').isEmail(),
+        check('usuarioReceptor', 'Usuario receptor no valido').isMongoId(),
+        validarCampos
     ],
-    updateUsuario
+    enviarSolicitudAmistad
 );
 
-router.delete('/:id', validarJWT, deleteUsuario);
+router.get('/listar-solicitudes-usuario', validarJWT, obtenerSolicitudesPendientesUsuarioLogueado);
 
-router.get('/getEstadosSentimentales', validarJWT, getEstadosSentimentales);
+router.put('/aceptar-solicitud/:id', validarJWT, aceptarSolicitud);
 
-router.get('/:id', validarJWT, getUsuarioById)
-
-router.put('/actualizarFotoPerfil/:tipo/:id', validarJWT, updateProfilePhoto);
-
-router.get('/search/:termino', validarJWT, search);
+router.delete('/rechazar-solicitud/:id', validarJWT, rechazarSolicitud);
 
 module.exports = router;

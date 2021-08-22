@@ -49,6 +49,6 @@ router.get('/:id', [ validarJWT ], getById);
 
 router.delete('/:id', [ validarJWT ], deletePublicacion);
 
-router.get('/', [ validarJWT ], findAllByUsuario)
+router.get('/getPublicacionesUsuario/:idUsuario', [ validarJWT ], findAllByUsuario)
 
 module.exports = router;

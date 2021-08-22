@@ -235,6 +235,37 @@ const updateProfilePhoto = async(request, response = response) => {
     }
 }
 
+/*
+    ########## SEARCH ##########
+
+    Retorna los usuarios que contengan el parametro en su nombre o email y esten activados
+ */
+const search = async(request, response = response) => {
+    const termino = request.params.termino;
+    const regex = new RegExp(termino, 'i');
+
+    try {
+        const usuarios = await Usuario.find({
+            $or: [
+                { nombreApellido: regex },
+                { email: regex },
+            ],
+            estado: true
+        });
+
+        response.status(HTTP_STATUS_OK).json({
+            ok: true,
+            usuarios: usuarios
+        });
+    } catch (error) {
+        console.error(error);
+        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
+}
+
 const actualizarCamposUsuarios = (usuario = Usuario, usuarioBody) => {
     usuario.email = usuarioBody.email;
     usuario.nombreApellido = usuarioBody.nombreApellido;
@@ -254,5 +285,6 @@ module.exports = {
     deleteUsuario,
     getEstadosSentimentales,
     getUsuarioById,
-    updateProfilePhoto
+    updateProfilePhoto,
+    search
 }
