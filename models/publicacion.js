@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const PublicacionSchema = Schema({
     titulo: {
@@ -30,4 +31,5 @@ PublicacionSchema.method('toJSON', function (){
     return object;
 });
 
+PublicacionSchema.plugin(mongoosePaginate);
 module.exports = model('Publicacion', PublicacionSchema);

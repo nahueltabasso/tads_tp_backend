@@ -225,10 +225,46 @@ const findAllByUsuario = async(request, response = response) => {
     }
 }
 
+/*
+    ########## OBTENER PUBLICACIONES USUARIO LOGUEADO ##########
+
+    Retorna las publiaciones con paginacion segun el id usuario del auth_token del header del request
+ */
+const findAllByUsuarioPaginacion = async(request, response = response) => {
+    const idUsuarioLogueado = request.params.idUsuario;
+    const  { page, size } = request.query;
+    const populate = [
+        { path: 'usuario', select: 'id nombreApellido srcImagen' }
+    ];
+    const options = {
+        populate,
+        limit: size,
+        page: page,
+        sort: { 'createAt': -1 }
+    }
+    let criterio = { usuario: idUsuarioLogueado }
+    try {
+        Publicacion.paginate(criterio, options)
+            .then((data) => {
+                response.status(HTTP_STATUS_OK).json({
+                    ok: true,
+                    result: data
+                });
+            });
+    } catch (error) {
+        console.log(error);
+        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
+}
+
 module.exports = {
     registarPublicacion,
     deletePublicacion,
     updatePublicacion,
     getById,
-    findAllByUsuario
+    findAllByUsuario,
+    findAllByUsuarioPaginacion
 }
