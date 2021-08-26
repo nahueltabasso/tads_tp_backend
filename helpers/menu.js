@@ -19,8 +19,13 @@ const getMenu = (role) => {
                 icono: 'nav-icon fas fa-user-friends',
                 url: 'mis-amigos',
                 submenu: []
+            },
+            {
+                titulo: 'Buscar',
+                icono: 'nav-icon fas fa-search-plus',
+                url: 'search',
+                submenu: []
             }
-
         ];
 
     }

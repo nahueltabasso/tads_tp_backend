@@ -214,5 +214,5 @@ module.exports = {
     obtenerSolicitudesPendientesUsuarioLogueado,
     aceptarSolicitud,
     rechazarSolicitud,
-    obtenerAmigos
+    obtenerAmigos,
 }
