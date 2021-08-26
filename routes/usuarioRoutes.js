@@ -17,7 +17,7 @@ const { check } = require('express-validator');
 const expressFileUpload = require('express-fileupload');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { getAll, updateUsuario, deleteUsuario, getEstadosSentimentales, getUsuarioById, updateProfilePhoto, search } = require('../controllers/usuarioController');
+const { getAll, updateUsuario, deleteUsuario, getEstadosSentimentales, getUsuarioById, updateProfilePhoto, search, getCantidadAmigosAndCantidadPublicacionesByUsuario} = require('../controllers/usuarioController');
 
 const router = Router();
 // Lectura y parseo del body
@@ -44,5 +44,7 @@ router.get('/:id', validarJWT, getUsuarioById)
 router.put('/actualizarFotoPerfil/:tipo/:id', validarJWT, updateProfilePhoto);
 
 router.get('/search/:termino', validarJWT, search);
+
+router.get('/getCantidadPublicacionesAndCantidadAmigos/:id', validarJWT, getCantidadAmigosAndCantidadPublicacionesByUsuario)
 
 module.exports = router;

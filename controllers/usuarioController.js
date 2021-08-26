@@ -16,6 +16,8 @@ _________ _______  ______   _______       _______  _______  ______       _______
 
 const { response } = require('express');
 const Usuario = require('../models/usuario');
+const Publicacion = require('../models/publicacion');
+const SolicitudAmistad = require('../models/solicitudAmistad');
 const {
     HTTP_STATUS_OK,
     HTTP_INTERNAL_SERVER_ERROR,
@@ -266,6 +268,40 @@ const search = async(request, response = response) => {
     }
 }
 
+/*
+    ########## SEARCH ##########
+
+    Retorna la cantidad de publicaciones y amigos de un usuario
+ */
+const getCantidadAmigosAndCantidadPublicacionesByUsuario = async(request, response = response) => {
+    const id = request.params.id;
+
+    try {
+        const [ totalAmigos, totalPublicaciones ] = await Promise.all([
+            SolicitudAmistad.find({
+                $or: [
+                    {$and: [{ usuarioEmisor: id }, { estado: true }]}, // Ya son amigos
+                    {$and: [{ usuarioReceptor: id }, { estado: true }]}  // Ya son amigos
+                ]
+            }).count(),
+
+            Publicacion.find({ 'usuario': id }).count()
+        ]);
+
+        response.status(HTTP_STATUS_OK).json({
+            ok: true,
+            totalAmigos: totalAmigos,
+            totalPublicaciones: totalPublicaciones
+        });
+    } catch (error) {
+        console.error(error);
+        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
+}
+
 const actualizarCamposUsuarios = (usuario = Usuario, usuarioBody) => {
     usuario.email = usuarioBody.email;
     usuario.nombreApellido = usuarioBody.nombreApellido;
@@ -286,5 +322,6 @@ module.exports = {
     getEstadosSentimentales,
     getUsuarioById,
     updateProfilePhoto,
-    search
+    search,
+    getCantidadAmigosAndCantidadPublicacionesByUsuario
 }
