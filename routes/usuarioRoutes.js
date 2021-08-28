@@ -45,6 +45,6 @@ router.put('/actualizarFotoPerfil/:tipo/:id', validarJWT, updateProfilePhoto);
 
 router.get('/search/:termino', validarJWT, search);
 
-router.get('/getCantidadPublicacionesAndCantidadAmigos/:id', validarJWT, getCantidadAmigosAndCantidadPublicacionesByUsuario)
+router.get('/getCantidadPublicacionesAndCantidadAmigos/:id', validarJWT, getCantidadAmigosAndCantidadPublicacionesByUsuario);
 
 module.exports = router;
