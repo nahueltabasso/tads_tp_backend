@@ -17,7 +17,7 @@ const expressFileUpload = require('express-fileupload');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { registarPublicacion, deletePublicacion, updatePublicacion, getById, findAllByUsuario, findAllByUsuarioPaginacion } = require('../controllers/publicacionController');
+const { registarPublicacion, deletePublicacion, updatePublicacion, getById, findAllByUsuario, findAllByUsuarioPaginacion, getPublicacionesAmigos } = require('../controllers/publicacionController');
 
 const router = Router();
 // Lectura y parseo del body
@@ -49,8 +49,10 @@ router.get('/:id', [ validarJWT ], getById);
 
 router.delete('/:id', [ validarJWT ], deletePublicacion);
 
-router.get('/getPublicacionesUsuario/:idUsuario', [ validarJWT ], findAllByUsuario)
+router.get('/getPublicacionesUsuario/:idUsuario', [ validarJWT ], findAllByUsuario);
 
-router.get('/getPublicacionesUsuarioPaginadas/:idUsuario', [ validarJWT ], findAllByUsuarioPaginacion)
+router.get('/getPublicacionesUsuarioPaginadas/:idUsuario', [ validarJWT ], findAllByUsuarioPaginacion);
+
+router.get('/getPublicacionesByAmigos/:idsUsuario', validarJWT, getPublicacionesAmigos);
 
 module.exports = router;

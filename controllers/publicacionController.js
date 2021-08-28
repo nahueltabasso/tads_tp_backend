@@ -260,11 +260,54 @@ const findAllByUsuarioPaginacion = async(request, response = response) => {
     }
 }
 
+/*
+    ########## OBTENER PUBLICACIONES AMIGOS ##########
+
+    Retorna las publiaciones en base a una lista de ids usuarios
+ */
+const getPublicacionesAmigos = async(request, response = response) => {
+    console.log('IDS AMIGOS: \n', request.params.idsUsuario.split(","));
+    const desde = Number(request.query.desde) || 0;
+    const totalPorPagina = Number(request.query.totalPorPagina) || 10;
+    try {
+        const [ publicaciones, totalPublicaciones ] = await Promise.all([
+            Publicacion.find()
+                .where('usuario')
+                .in(request.params.idsUsuario.split(","))
+                .skip(desde)
+                .limit(totalPorPagina)
+                .populate('usuario', 'id nombreApellido srcImagen google')
+                .sort({ 'createAt': -1 }),
+
+            Publicacion.find()
+                .where('usuario')
+                .in(request.params.idsUsuario.split(","))
+                .count()
+        ]);
+
+        const p = await Publicacion.find().where('usuario').in(request.params.idsUsuario.split(","));
+
+        response.status(HTTP_STATUS_OK).json({
+            ok: true,
+            publicaciones: publicaciones,
+            totalPublicaciones: totalPublicaciones
+        });
+    } catch (error) {
+        console.log(error);
+        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
+
+}
+
 module.exports = {
     registarPublicacion,
     deletePublicacion,
     updatePublicacion,
     getById,
     findAllByUsuario,
-    findAllByUsuarioPaginacion
+    findAllByUsuarioPaginacion,
+    getPublicacionesAmigos
 }
