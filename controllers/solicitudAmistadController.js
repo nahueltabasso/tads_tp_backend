@@ -183,22 +183,40 @@ const rechazarSolicitud = async(request, response = response) => {
     }
 }
 
-const obtenerAmigos = async(request, response = response) => {
-    const idUsuario = request.params.id;
+/*
+    ########## GET AMIGOS ##########
+
+    Retorna los ids de los amigos de un usuario en particular
+ */
+const obtenerIdsAmigos = async(request, response = response) => {
+    const idUsuario = request.params.idUsuario;
 
     try {
         // Obtenemos los amigos del usuario
-        let amigos = await SolicitudAmistad.find({
+        let amigosDB = await SolicitudAmistad.find({
             $or: [
-                {$and: [{ emailEmisor: idUsuario }, { estado: true }]},
-                {$and: [{ emailReceptor: idUsuario }, { estado: true }]}
+                {$and: [{ usuarioEmisor: idUsuario }, { estado: true }]},
+                {$and: [{ usuarioReceptor: idUsuario }, { estado: true }]}
             ]
-        }) .populate('usuarioEmisor', 'id nombreApellido email pais srcImagen')
-            .populate('usuarioReceptor', 'id nombreApellido email pais srcImagen');
+        }) .populate('usuarioEmisor', 'id')
+            .populate('usuarioReceptor', 'id');
+
+        let idsAmigosResponse = [];
+        if (amigosDB.length) {
+            for (let i = 0; i < amigosDB.length; i++) {
+                if (!idsAmigosResponse.includes(amigosDB[i].usuarioEmisor.id)) {
+                    idsAmigosResponse.push(amigosDB[i].usuarioEmisor.id);
+                }
+
+                if (!idsAmigosResponse.includes(amigosDB[i].usuarioReceptor.id)) {
+                    idsAmigosResponse.push(amigosDB[i].usuarioReceptor.id);
+                }
+            }
+        }
 
         response.status(HTTP_STATUS_OK).json({
             ok: true,
-            amigos: amigos
+            idsAmigos: idsAmigosResponse
         });
     } catch (error) {
         console.error(error);
@@ -209,10 +227,12 @@ const obtenerAmigos = async(request, response = response) => {
     }
 }
 
+
+
 module.exports = {
     enviarSolicitudAmistad,
     obtenerSolicitudesPendientesUsuarioLogueado,
     aceptarSolicitud,
     rechazarSolicitud,
-    obtenerAmigos,
+    obtenerIdsAmigos,
 }

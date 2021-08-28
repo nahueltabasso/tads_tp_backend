@@ -16,7 +16,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { enviarSolicitudAmistad, obtenerSolicitudesPendientesUsuarioLogueado, aceptarSolicitud, rechazarSolicitud } = require('../controllers/solicitudAmistadController');
+const { enviarSolicitudAmistad, obtenerSolicitudesPendientesUsuarioLogueado, aceptarSolicitud, rechazarSolicitud, obtenerIdsAmigos } = require('../controllers/solicitudAmistadController');
 
 const router = Router();
 
@@ -38,5 +38,7 @@ router.get('/listar-solicitudes-usuario', validarJWT, obtenerSolicitudesPendient
 router.put('/aceptar-solicitud/:id', validarJWT, aceptarSolicitud);
 
 router.delete('/rechazar-solicitud/:id', validarJWT, rechazarSolicitud);
+
+router.get('/getAmigos/:idUsuario', validarJWT, obtenerIdsAmigos);
 
 module.exports = router;
