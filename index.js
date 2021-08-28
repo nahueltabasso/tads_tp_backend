@@ -40,6 +40,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/publicacion', require('./routes/publicacionRoutes'));
 app.use('/api/file', require('./routes/fileRoutes'));
 app.use('/api/solicitudes', require('./routes/solicitudAmistadRoutes'));
+app.use('/api/reaccion', require('./routes/reaccionRoutes'));
 
 app.listen(process.env.PORT, () => {
     console.log('Servidor corriendo en puerto: ' + process.env.PORT);
