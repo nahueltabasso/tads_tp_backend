@@ -1,12 +1,4 @@
-/*ste la publicacion'
-            });
-        }
-        // Validamos si existe el usuario
-        const usuarioDB = await Usuario.findById(idUsuario);
-        if (!usuarioDB) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No
+/*
 _________ _______  ______   _______       _______  _______  ______       _______  _______  _______ _________ _______  _
 \__   __/(  ___  )(  __  \ (  ____ \     (  ____ )(  ____ \(  __  \     (  ____ \(  ___  )(  ____ \\__   __/(  ___  )( \
    ) (   | (   ) || (  \  )| (    \/     | (    )|| (    \/| (  \  )    | (    \/| (   ) || (    \/   ) (   | (   ) || (
