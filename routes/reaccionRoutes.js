@@ -14,7 +14,7 @@ _________ _______  ______   _______       _______  _______  ______       _______
 
 const { Router } = require('express');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { registarReaccion, getCantidadReaccionesByPublicacion, isUsuarioReaccionPublicacion } = require('../controllers/reaccionController');
+const { registarReaccion, getCantidadReaccionesByPublicacion, isUsuarioReaccionPublicacion, deleteReaccion } = require('../controllers/reaccionController');
 
 const router = Router();
 
@@ -23,5 +23,7 @@ router.post('/:idPublicacion/:idUsuario', validarJWT, registarReaccion);
 router.get('/getCantidadReaccionesByPublicacion/:idPublicacion', validarJWT, getCantidadReaccionesByPublicacion);
 
 router.get('/isUsuarioReaccion/:idPublicacion/:idUsuario', validarJWT, isUsuarioReaccionPublicacion);
+
+router.delete('/:idPublicacion/:idUsuario', validarJWT, deleteReaccion);
 
 module.exports = router;

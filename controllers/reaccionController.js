@@ -26,7 +26,7 @@ const { response } = require('express');
 const Reaccion = require('../models/reaccion');
 const Usuario = require('../models/usuario');
 const Publicacion = require('../models/publicacion');
-const { HTTP_NOT_FOUND, HTTP_CREATED, HTTP_STATUS_OK } = require('../utils/constantes');
+const { HTTP_NOT_FOUND, HTTP_CREATED, HTTP_STATUS_OK, HTTP_NOT_CONTENT } = require('../utils/constantes');
 
 /*
     ########## REGISTRAR REACCION ##########
@@ -43,9 +43,18 @@ const registarReaccion = async(request, response = response) => {
         if (!publicacionDB) {
             return response.status(HTTP_NOT_FOUND).json({
                 ok: false,
+                msg: 'No exi existe la publicacion'
+            });
+        }
+        // Validamos si existe el usuario
+        const usuarioDB = await Usuario.findById(idUsuario);
+        if (!usuarioDB) {
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
                 msg: 'No exi existe el usuario'
             });
         }
+
         // Registramos la reaccion
         let reaccion = new Reaccion();
         reaccion.usuario = idUsuario;
@@ -101,7 +110,7 @@ const isUsuarioReaccionPublicacion = async(request, response = response) => {
     try {
         const reaccion = await Reaccion.findOne(
             {$and: [{ usuario: idUsuario }, { publicacion: idPublicacion }]}
-        )
+        );
 
         if (reaccion) {
             return response.status(HTTP_STATUS_OK).json({
@@ -123,8 +132,43 @@ const isUsuarioReaccionPublicacion = async(request, response = response) => {
     }
 }
 
+/*
+    ########## ELIMINAR REACCION ##########
+
+    Elimina reaccion de un usuario sobre una publicacion
+ */
+const deleteReaccion = async(request, response = response) => {
+    const idPublicacion = request.params.idPublicacion;
+    const idUsuario = request.params.idUsuario
+    let reaccion
+    try {
+        reaccion = await Reaccion.findOne(
+            {$and: [{ usuario: idUsuario }, { publicacion: idPublicacion }]}
+        );
+        if (!reaccion) {
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe la reaccion a eliminar'
+            });
+        }
+
+        // Eliminamos la reaccion
+        await Reaccion.findByIdAndDelete(reaccion.id);
+        response.status(HTTP_NOT_CONTENT).json({
+            ok: true
+        });
+    } catch (error) {
+        console.error(error);
+        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
+            ok: false,
+            msg: MSG_ERROR_ADMINISTRADOR
+        });
+    }
+}
+
 module.exports = {
     registarReaccion,
     getCantidadReaccionesByPublicacion,
-    isUsuarioReaccionPublicacion
+    isUsuarioReaccionPublicacion,
+    deleteReaccion
 }
