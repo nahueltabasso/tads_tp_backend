@@ -18,6 +18,7 @@ const { response } = require('express');
 const { HTTP_STATUS_OK, HTTP_INTERNAL_SERVER_ERROR } = require('../utils/constantes');
 const { MSG_ERROR_ADMINISTRADOR } = require('../utils/mensajes');
 const { getFile } = require('../helpers/uploadFileService');
+const { httpError } = require('../helpers/handleError');
 
 /*
     ########## VER ARCHIVO ##########
@@ -30,10 +31,7 @@ const viewFile = async(request, response = response) => {
 
     const tiposValidos = ['publicaciones', 'perfiles'];
     if (!tiposValidos.includes(tipo)) {
-        return response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        })
+        httpError(response, null, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 
     const pathFile = await getFile(tipo, file);

@@ -29,6 +29,7 @@ const {
     HTTP_UNAUTHORIZED
 } = require("../utils/constantes");
 const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
+const { httpError } = require('../helpers/handleError');
 
 /*
     ########## LISTAR USUARIOS ##########
@@ -84,11 +85,7 @@ const updateUsuario = async(request, response = response) => {
             usuario: usuarioActualizado
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        })
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -119,11 +116,7 @@ const deleteUsuario = async(request, response = response) => {
             msg: 'Usuario borrado con exito!'
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        })
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -163,11 +156,7 @@ const getUsuarioById = async(request, response = response) => {
             usuario: usuario
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -229,11 +218,7 @@ const updateProfilePhoto = async(request, response = response) => {
             nombreArchivo: nombreArchivo
         });
     } catch (error) {
-        console.error(error);
-        return response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -260,11 +245,7 @@ const search = async(request, response = response) => {
             usuarios: usuarios
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -294,11 +275,7 @@ const getCantidadAmigosAndCantidadPublicacionesByUsuario = async(request, respon
             totalPublicaciones: totalPublicaciones
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 

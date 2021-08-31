@@ -18,6 +18,7 @@ const { response } = require('express');
 const SolicitudAmistad = require('../models/solicitudAmistad');
 const Usuario = require('../models/usuario');
 const { HTTP_CREATED, HTTP_STATUS_OK, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND, HTTP_NOT_CONTENT } = require('../utils/constantes');
+const { httpError } = require('../helpers/handleError');
 
 /*
     ########## ENVIAR SOLICITUD DE AMISTAD ##########
@@ -30,10 +31,7 @@ const enviarSolicitudAmistad = async(request, response = response) => {
 
     try {
         if (idUsuarioLogueado !== solicitudAmistad.usuarioEmisor) {
-            return response.status(HTTP_UNAUTHORIZED).json({
-                ok: false,
-                msg: 'Se intenta acceder a los datos de otro usuario'
-            });
+            httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
         }
 
         // Validamos si los usuarios ya son amigos
@@ -86,11 +84,7 @@ const enviarSolicitudAmistad = async(request, response = response) => {
             solicitudAmistad: nuevaSolicitudDeAmistad
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -112,11 +106,7 @@ const obtenerSolicitudesPendientesUsuarioLogueado = async(request, response = re
             solicitudes: solicitudes
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -131,10 +121,7 @@ const aceptarSolicitud = async(request, response = response) => {
     try {
         let solicitud = await SolicitudAmistad.findById(idSolicitud);
         if (!solicitud) {
-            response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No existe la solicitud de amistad a aceptar'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe la solicitud de amistad a aceptar');
         }
         // Aceptamos la solicitud y persistimos en la base de datos
         solicitud.estado = true;
@@ -144,11 +131,7 @@ const aceptarSolicitud = async(request, response = response) => {
             ok: true
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -163,10 +146,7 @@ const rechazarSolicitud = async(request, response = response) => {
     try {
         let solicitud = await SolicitudAmistad.findById(idSolicitud);
         if (!solicitud) {
-            response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No existe la solicitud de amistad a rechazar!'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe la solicitud de amistad a rechazar');
         }
         // Eliminamos la solicitud para que pueda generarse en un futuro
         await SolicitudAmistad.findByIdAndDelete(idSolicitud);
@@ -175,11 +155,7 @@ const rechazarSolicitud = async(request, response = response) => {
             ok: true
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -219,11 +195,7 @@ const obtenerIdsAmigos = async(request, response = response) => {
             idsAmigos: idsAmigosResponse
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 

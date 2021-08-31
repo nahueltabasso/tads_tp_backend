@@ -31,6 +31,7 @@ const { enviarEmail } = require('../helpers/emailService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
+const { httpError } = require('../helpers/handleError');
 
 /*
     ########## SOLICITAR CAMBIO DE PASSWORD ##########
@@ -50,17 +51,11 @@ const forgotPassword = async(request, response = response) => {
         // Validamos si existe el usuario con el email del request
         let usuario = await Usuario.findOne({ email: emailUsuario });
         if (!usuario) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No existe un usuario con el email proporcionado!'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe un usuario con el email proporcionado');
         }
 
         if (!usuario.estado) {
-            return response.status(HTTP_BAD_REQUEST).json({
-                ok: false,
-                msg: 'El usuario no se encuentra activo'
-            });
+            httpError(response, null, HTTP_BAD_REQUEST, 'El usuario no se encuentra activo');
         }
 
         // Al llegar hasta este punto el usuario existe en la base de datos
@@ -101,11 +96,7 @@ const forgotPassword = async(request, response = response) => {
             emailStatus: emailStatus
         });
     } catch (error) {
-        console.log(error);
-        return response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -130,10 +121,7 @@ const resetPassword = async(request, response = response) => {
         let usuario = await Usuario.findOne({ resetToken: resetToken });
 
         if (!usuario) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'El token no corresponde a ningun usuario activo'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'El token no corresponde a ningun usuario activo');
         }
         // Encriptar la nueva contraseña del usuario
         const salt = bcrypt.genSaltSync();
@@ -147,11 +135,7 @@ const resetPassword = async(request, response = response) => {
             msg: 'Contraseña modificada!'
         });
     } catch (error) {
-        console.log(error);
-        return response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_NOT_FOUND, MSG_ERROR_ADMINISTRADOR);
     }
 }
 

@@ -19,6 +19,7 @@ const Reaccion = require('../models/reaccion');
 const Usuario = require('../models/usuario');
 const Publicacion = require('../models/publicacion');
 const { HTTP_NOT_FOUND, HTTP_CREATED, HTTP_STATUS_OK, HTTP_NOT_CONTENT } = require('../utils/constantes');
+const { httpError } = require('../helpers/handleError');
 
 /*
     ########## REGISTRAR REACCION ##########
@@ -33,18 +34,12 @@ const registarReaccion = async(request, response = response) => {
         // Validamos si existe la publicacion
         const publicacionDB = await Publicacion.findById(idPublicacion);
         if (!publicacionDB) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No exi existe la publicacion'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion');
         }
         // Validamos si existe el usuario
         const usuarioDB = await Usuario.findById(idUsuario);
         if (!usuarioDB) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No exi existe el usuario'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe el usuario');
         }
 
         // Registramos la reaccion
@@ -59,11 +54,7 @@ const registarReaccion = async(request, response = response) => {
             reaccion: reaccion
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -82,11 +73,7 @@ const getCantidadReaccionesByPublicacion = async(request, response = response) =
             cantReacciones: cantReacciones
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -116,11 +103,7 @@ const isUsuarioReaccionPublicacion = async(request, response = response) => {
             reaccion: false
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -138,10 +121,7 @@ const deleteReaccion = async(request, response = response) => {
             {$and: [{ usuario: idUsuario }, { publicacion: idPublicacion }]}
         );
         if (!reaccion) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No existe la reaccion a eliminar'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe la reaccion a eliminar');
         }
 
         // Eliminamos la reaccion
@@ -150,11 +130,7 @@ const deleteReaccion = async(request, response = response) => {
             ok: true
         });
     } catch (error) {
-        console.error(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 

@@ -19,6 +19,7 @@ const { HTTP_UNAUTHORIZED, HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_RE
 const { MSG_ERROR_ADMINISTRADOR } = require('../utils/mensajes');
 const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
 const Publicacion = require('../models/publicacion');
+const { httpError } = require('../helpers/handleError');
 
 /*
     ########## REGISTRAR PUBLICACION ##########
@@ -31,27 +32,18 @@ const registarPublicacion = async(request, response = response) => {
     const tipo = request.params.tipo;
 
     if (idUsuarioLogueado !== body.usuario) {
-        return response.status(HTTP_UNAUTHORIZED).json({
-            ok: false,
-            msg: 'Se intenta acceder a los datos de otro usuario'
-        });
+        httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
     }
 
     const tiposValidos = ['publicaciones', 'perfiles'];
     if (!tiposValidos.includes(tipo)) {
-        return response.status(HTTP_BAD_REQUEST).json({
-            ok: false,
-            msg: 'Tipo Invalido'
-        });
+        httpError(response, null, HTTP_BAD_REQUEST, 'Tipo Invalido');
     }
 
     // Si llega a este punto implica que el usuario logueado es el mismo del body del request de publicacion
     // Validamos que hay un archivo en el request
     if (!request.files || Object.keys(request.files) === 0) {
-        return response.status(HTTP_BAD_REQUEST).json({
-            ok: false,
-            msg: 'No se encontro ningun archivo'
-        });
+        httpError(response, null, HTTP_BAD_REQUEST, 'No se encontro ningun archivo');
     }
     const file = request.files.image;
 
@@ -74,11 +66,7 @@ const registarPublicacion = async(request, response = response) => {
             publicacion: publicacion
         });
     } catch (error) {
-        console.error(error);
-        return response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -93,19 +81,13 @@ const deletePublicacion = async(request, response = response) => {
     try {
         let publicacion = await Publicacion.findById(idPublicacion).populate('usuario', 'id');
         if (!publicacion) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No existe la publicacion en la base de datos'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion en la base de datos');
         }
 
         const idUsuario = publicacion.usuario.id;
         // Validacion de seguridad de los datos
         if (idUsuario !== request.id) {
-            return response.status(HTTP_UNAUTHORIZED).json({
-                ok: false,
-                msg: 'Se intenta acceder a los datos de otro usuario'
-            });
+            httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
         }
 
         // Si pasa la validacion de seguridad de los datos, eliminamos de la base de datos
@@ -119,11 +101,7 @@ const deletePublicacion = async(request, response = response) => {
             msg: 'Eliminado con exito!'
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -138,19 +116,13 @@ const updatePublicacion = async(request, response = response) => {
     try {
         let publicacion = await Publicacion.findById(idPublicacion).populate('usuario', 'id');
         if (!publicacion) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No existe la publicacion en la base de datos'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion en la base de datos');
         }
 
         const idUsuario = publicacion.usuario.id;
         // Validacion de seguridad de los datos
         if (idUsuario !== request.id) {
-            return response.status(HTTP_UNAUTHORIZED).json({
-                ok: false,
-                msg: 'Se intenta acceder a los datos de otro usuario'
-            });
+            httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
         }
 
         // Actualizamos los datos y persistimos en la base de datos
@@ -163,11 +135,7 @@ const updatePublicacion = async(request, response = response) => {
             publicacion: publicacion
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -182,10 +150,7 @@ const getById = async(request, response = response) => {
     try {
         let publicacion = await Publicacion.findById(idPublicacion);
         if (!publicacion) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No existe la publicacion en la base de datos'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion en la base de datos');
         }
 
         response.status(HTTP_STATUS_OK).json({
@@ -193,11 +158,7 @@ const getById = async(request, response = response) => {
             publicacion: publicacion
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -217,11 +178,7 @@ const findAllByUsuario = async(request, response = response) => {
             publicaciones: publicaciones
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -252,11 +209,7 @@ const findAllByUsuarioPaginacion = async(request, response = response) => {
                 });
             });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -270,6 +223,13 @@ const getPublicacionesAmigos = async(request, response = response) => {
     const desde = Number(request.query.desde) || 0;
     const totalPorPagina = Number(request.query.totalPorPagina) || 10;
     try {
+        if (request.params.idsUsuario.split(",") === undefined || request.params.idsUsuario.split(",") == null) {
+            response.status(HTTP_STATUS_OK).json({
+                ok: true,
+                publicaciones: [],
+                totalPublicaciones: 0
+            });
+        }
         const [ publicaciones, totalPublicaciones ] = await Promise.all([
             Publicacion.find()
                 .where('usuario')
@@ -293,11 +253,7 @@ const getPublicacionesAmigos = async(request, response = response) => {
             totalPublicaciones: totalPublicaciones
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 
 }

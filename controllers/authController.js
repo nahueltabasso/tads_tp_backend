@@ -18,6 +18,7 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
 const Rol = require('../models/rol');
+const { httpError } = require('../helpers/handleError');
 const { generarJWT } = require('../helpers/jwt');
 const {
     HTTP_BAD_REQUEST,
@@ -42,10 +43,7 @@ const registrarUsuario = async(request, response = response) => {
         // Validamos si ya existe un usuario con el email del request
         const existeUsuario = await Usuario.findOne({ email: email });
         if (existeUsuario) {
-            return response.status(HTTP_BAD_REQUEST).json({
-                ok: false,
-                msg: 'Ya existe un Usuario con el email ' + email
-            });
+            httpError(response, null, HTTP_BAD_REQUEST, 'Ya existe un Usuario con el email ' + email);
         }
 
         const usuario = new Usuario(request.body);
@@ -54,10 +52,7 @@ const registrarUsuario = async(request, response = response) => {
             const rol = await Rol.findOne({ nombreRol: ROLE_USER });
 
             if (!rol) {
-                return response.status(HTTP_NOT_FOUND).json({
-                    ok: false,
-                    msg: 'No existe el Rol en la base de datos'
-                });
+                httpError(response, null, HTTP_NOT_FOUND, 'No existe el Rol en la base de datos');
             }
             usuario.rol = rol;
         }
@@ -84,11 +79,7 @@ const registrarUsuario = async(request, response = response) => {
             usuario: usuario,
         });
     } catch (error) {
-        console.log("Ocurrio un error: ", error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -103,10 +94,7 @@ const activeAccount = async(request, response = response) => {
         if (tokenActivacion) {
             const usuarioDB = await Usuario.findOne({ tokenActivacion: tokenActivacion }).populate('rol', 'nombreRol');
             if (!usuarioDB) {
-                return response.status(HTTP_NOT_FOUND).json({
-                    ok: false,
-                    msg: 'El token no corresponde a ningun usuario'
-                });
+                httpError(response, null, HTTP_NOT_FOUND, 'El token no corresponde a ningun usuario');
             }
             // Activamos la cuenta del usuario
             usuarioDB.estado = true;
@@ -119,11 +107,7 @@ const activeAccount = async(request, response = response) => {
             });
         }
     } catch (error) {
-        console.log(error);
-        return response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -140,11 +124,7 @@ const getRoles = async(request, response = response) => {
             roles: roles
         });
     } catch (error) {
-        console.log("Ocurrio un error: ", error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -160,27 +140,18 @@ const login = async(request, response = response) => {
         let usuario = await Usuario.findOne({ email: email }).populate('rol', 'nombreRol');
         console.log(usuario);
         if (!usuario) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'Email o Contraseña incorrectas!'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'Email o Contraseña incorrectas!');
         }
 
         // Verificamos la contraseña
         const validPassword = bcrypt.compareSync(password, usuario.password);
         if (!validPassword) {
-            return response.status(HTTP_BAD_REQUEST).json({
-                ok: false,
-                msg: 'Email o Contraseña incorrectas!'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'Email o Contraseña incorrectas!');
         }
 
         // Validamos que el usuario este activado
         if (!usuario.estado) {
-            return response.status(HTTP_BAD_REQUEST).json({
-                ok: false,
-                msg: 'El usuario esta inactivo! Revisar email'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'El usuario esta inactivo! Revisar email!');
         }
 
         // Generamos el JWT (Json Web Token)
@@ -202,11 +173,7 @@ const login = async(request, response = response) => {
             primerLogin: primerLogin
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
@@ -258,11 +225,7 @@ const googleLogin = async(request, response = response) => {
             usuario: usuario
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: 'Token de Google Invalido!'
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, 'Token de Google Invalido!');
     }
 }
 
@@ -286,11 +249,7 @@ const generateRefreshToken = async(request, response = response) => {
     try {
         usuario = await Usuario.findById(idUsuario).populate('rol', 'nombreRol');
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
     const token = await generarJWT(idUsuario, usuario.nombreApellido, usuario.email);
 
@@ -312,10 +271,7 @@ const getMenuUsuarioLogueado = async(request, response = Response) => {
     try {
         const rol = await Rol.findOne({ nombreRol: nombreRol });
         if (!rol) {
-            return response.status(HTTP_NOT_FOUND).json({
-                ok: false,
-                msg: 'No se encontro el rol del usuario'
-            });
+            httpError(response, null, HTTP_NOT_FOUND, 'No se encontro el rol del usuario');
         }
 
         // Existe el rol en la base de datos por lo tanto devolvemos el menu al cliente
@@ -324,11 +280,7 @@ const getMenuUsuarioLogueado = async(request, response = Response) => {
             menu: getMenu(rol)
         });
     } catch (error) {
-        console.log(error);
-        response.status(HTTP_INTERNAL_SERVER_ERROR).json({
-            ok: false,
-            msg: MSG_ERROR_ADMINISTRADOR
-        });
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
 
