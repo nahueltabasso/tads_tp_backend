@@ -31,7 +31,10 @@ const enviarSolicitudAmistad = async(request, response = response) => {
 
     try {
         if (idUsuarioLogueado !== solicitudAmistad.usuarioEmisor) {
-            httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
+            return response.status(HTTP_UNAUTHORIZED).json({
+                ok: false,
+                msg: 'Se intenta acceder a los datos de otro usuario'
+            });
         }
 
         // Validamos si los usuarios ya son amigos

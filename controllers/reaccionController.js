@@ -34,12 +34,18 @@ const registarReaccion = async(request, response = response) => {
         // Validamos si existe la publicacion
         const publicacionDB = await Publicacion.findById(idPublicacion);
         if (!publicacionDB) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe la publicacion'
+            });
         }
         // Validamos si existe el usuario
         const usuarioDB = await Usuario.findById(idUsuario);
         if (!usuarioDB) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No existe el usuario');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe el usuario'
+            });
         }
 
         // Registramos la reaccion
@@ -121,7 +127,10 @@ const deleteReaccion = async(request, response = response) => {
             {$and: [{ usuario: idUsuario }, { publicacion: idPublicacion }]}
         );
         if (!reaccion) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No existe la reaccion a eliminar');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe la reaccion a eliminar'
+            });
         }
 
         // Eliminamos la reaccion

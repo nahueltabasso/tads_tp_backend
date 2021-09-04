@@ -51,11 +51,17 @@ const forgotPassword = async(request, response = response) => {
         // Validamos si existe el usuario con el email del request
         let usuario = await Usuario.findOne({ email: emailUsuario });
         if (!usuario) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No existe un usuario con el email proporcionado');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe un usuario con el email proporcionado'
+            });
         }
 
         if (!usuario.estado) {
-            httpError(response, null, HTTP_BAD_REQUEST, 'El usuario no se encuentra activo');
+            return response.status(HTTP_BAD_REQUEST).json({
+                ok: false,
+                msg: 'El usuario no se encuentra activo'
+            });
         }
 
         // Al llegar hasta este punto el usuario existe en la base de datos

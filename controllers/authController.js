@@ -43,7 +43,10 @@ const registrarUsuario = async(request, response = response) => {
         // Validamos si ya existe un usuario con el email del request
         const existeUsuario = await Usuario.findOne({ email: email });
         if (existeUsuario) {
-            httpError(response, null, HTTP_BAD_REQUEST, 'Ya existe un Usuario con el email ' + email);
+            return response.status(HTTP_BAD_REQUEST).json({
+                ok: false,
+                msg: 'Ya existe un Usuario con el email ' + email
+            });
         }
 
         const usuario = new Usuario(request.body);
@@ -52,7 +55,10 @@ const registrarUsuario = async(request, response = response) => {
             const rol = await Rol.findOne({ nombreRol: ROLE_USER });
 
             if (!rol) {
-                httpError(response, null, HTTP_NOT_FOUND, 'No existe el Rol en la base de datos');
+                return response.status(HTTP_NOT_FOUND).json({
+                    ok: false,
+                    msg: 'No existe el Rol en la base de datos'
+                });
             }
             usuario.rol = rol;
         }
@@ -94,7 +100,10 @@ const activeAccount = async(request, response = response) => {
         if (tokenActivacion) {
             const usuarioDB = await Usuario.findOne({ tokenActivacion: tokenActivacion }).populate('rol', 'nombreRol');
             if (!usuarioDB) {
-                httpError(response, null, HTTP_NOT_FOUND, 'El token no corresponde a ningun usuario');
+                return response.status(HTTP_NOT_FOUND).json({
+                    ok: false,
+                    msg: 'El token no corresponde a ningun usuario'
+                });
             }
             // Activamos la cuenta del usuario
             usuarioDB.estado = true;
@@ -140,18 +149,27 @@ const login = async(request, response = response) => {
         let usuario = await Usuario.findOne({ email: email }).populate('rol', 'nombreRol');
         console.log(usuario);
         if (!usuario) {
-            httpError(response, null, HTTP_NOT_FOUND, 'Email o Contraseña incorrectas!');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'Email o Contraseña incorrectas!'
+            });
         }
 
         // Verificamos la contraseña
         const validPassword = bcrypt.compareSync(password, usuario.password);
         if (!validPassword) {
-            httpError(response, null, HTTP_NOT_FOUND, 'Email o Contraseña incorrectas!');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'Email o Contraseña incorrectas!'
+            });
         }
 
         // Validamos que el usuario este activado
         if (!usuario.estado) {
-            httpError(response, null, HTTP_NOT_FOUND, 'El usuario esta inactivo! Revisar email!');
+            return response.status(HTTP_BAD_REQUEST).json({
+                ok: false,
+                msg: 'El usuario esta inactivo! Revisar email!'
+            });
         }
 
         // Generamos el JWT (Json Web Token)
@@ -271,7 +289,10 @@ const getMenuUsuarioLogueado = async(request, response = Response) => {
     try {
         const rol = await Rol.findOne({ nombreRol: nombreRol });
         if (!rol) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No se encontro el rol del usuario');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No se encontro el rol del usuario!'
+            });
         }
 
         // Existe el rol en la base de datos por lo tanto devolvemos el menu al cliente

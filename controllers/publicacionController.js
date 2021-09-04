@@ -32,18 +32,27 @@ const registarPublicacion = async(request, response = response) => {
     const tipo = request.params.tipo;
 
     if (idUsuarioLogueado !== body.usuario) {
-        httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
+        return response.status(HTTP_UNAUTHORIZED).json({
+            ok: false,
+            msg: 'Se intenta acceder a los datos de otro usuario'
+        });
     }
 
     const tiposValidos = ['publicaciones', 'perfiles'];
     if (!tiposValidos.includes(tipo)) {
-        httpError(response, null, HTTP_BAD_REQUEST, 'Tipo Invalido');
+        return response.status(HTTP_BAD_REQUEST).json({
+            ok: false,
+            msg: 'Tipo Invalido'
+        });
     }
 
     // Si llega a este punto implica que el usuario logueado es el mismo del body del request de publicacion
     // Validamos que hay un archivo en el request
     if (!request.files || Object.keys(request.files) === 0) {
-        httpError(response, null, HTTP_BAD_REQUEST, 'No se encontro ningun archivo');
+        return response.status(HTTP_BAD_REQUEST).json({
+            ok: false,
+            msg: 'No se encontro ningun archivo'
+        });
     }
     const file = request.files.image;
 
@@ -81,13 +90,19 @@ const deletePublicacion = async(request, response = response) => {
     try {
         let publicacion = await Publicacion.findById(idPublicacion).populate('usuario', 'id');
         if (!publicacion) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion en la base de datos');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe la publicacion en la base de datos'
+            });
         }
 
         const idUsuario = publicacion.usuario.id;
         // Validacion de seguridad de los datos
         if (idUsuario !== request.id) {
-            httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
+            return response.status(HTTP_UNAUTHORIZED).json({
+                ok: false,
+                msg: 'Se intenta acceder a los datos de otro usuario'
+            });
         }
 
         // Si pasa la validacion de seguridad de los datos, eliminamos de la base de datos
@@ -116,13 +131,19 @@ const updatePublicacion = async(request, response = response) => {
     try {
         let publicacion = await Publicacion.findById(idPublicacion).populate('usuario', 'id');
         if (!publicacion) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion en la base de datos');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe la publicacion en la base de datos'
+            });
         }
 
         const idUsuario = publicacion.usuario.id;
         // Validacion de seguridad de los datos
         if (idUsuario !== request.id) {
-            httpError(response, null, HTTP_UNAUTHORIZED, 'Se intenta acceder a los datos de otro usuario');
+            return response.status(HTTP_UNAUTHORIZED).json({
+                ok: false,
+                msg: 'Se intenta acceder a los datos de otro usuario'
+            });
         }
 
         // Actualizamos los datos y persistimos en la base de datos
@@ -150,7 +171,10 @@ const getById = async(request, response = response) => {
     try {
         let publicacion = await Publicacion.findById(idPublicacion);
         if (!publicacion) {
-            httpError(response, null, HTTP_NOT_FOUND, 'No existe la publicacion en la base de datos');
+            return response.status(HTTP_NOT_FOUND).json({
+                ok: false,
+                msg: 'No existe la publicacion en la base de datos'
+            });
         }
 
         response.status(HTTP_STATUS_OK).json({
