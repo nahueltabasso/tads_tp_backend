@@ -19,6 +19,7 @@ const { HTTP_UNAUTHORIZED, HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_RE
 const { MSG_ERROR_ADMINISTRADOR } = require('../utils/mensajes');
 const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
 const Publicacion = require('../models/publicacion');
+const Reaccion = require('../models/reaccion');
 const { httpError } = require('../helpers/handleError');
 
 /*
@@ -104,6 +105,9 @@ const deletePublicacion = async(request, response = response) => {
                 msg: 'Se intenta acceder a los datos de otro usuario'
             });
         }
+
+        // Eliminamos las reacciones de la publicacion
+        await Reaccion.deleteMany({publicacion: publicacion.id});
 
         // Si pasa la validacion de seguridad de los datos, eliminamos de la base de datos
         const srcImagen = publicacion.srcImagen;
@@ -225,8 +229,10 @@ const findAllByUsuarioPaginacion = async(request, response = response) => {
     }
     let criterio = { usuario: idUsuarioLogueado }
     try {
+
         Publicacion.paginate(criterio, options)
             .then((data) => {
+                console.log(data);
                 response.status(HTTP_STATUS_OK).json({
                     ok: true,
                     result: data
