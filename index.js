@@ -31,6 +31,17 @@ app.use(express.json());
 // Base de datos
 dbConnection();
 
+// Node Server
+const server = require('http').createServer(app);
+module.exports.io = require('socket.io')(server, {
+    cors: {
+        origin: process.env.CLIENT_PATH,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true
+    }
+});
+require('./sockets/socket');
+
 // Directorio publico
 app.use(express.static('public'));
 
@@ -41,8 +52,10 @@ app.use('/api/publicacion', require('./routes/publicacionRoutes'));
 app.use('/api/file', require('./routes/fileRoutes'));
 app.use('/api/solicitudes', require('./routes/solicitudAmistadRoutes'));
 app.use('/api/reaccion', require('./routes/reaccionRoutes'));
+app.use('/api/mensaje-chat', require('./routes/mensajeChatRoutes'));
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, (err) => {
+    if (err) throw new Error(err);
     console.log('Servidor corriendo en puerto: ' + process.env.PORT);
 });
 
