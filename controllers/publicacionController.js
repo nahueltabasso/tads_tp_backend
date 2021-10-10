@@ -106,15 +106,12 @@ const registarPublicacionMultipleFiles = async(request, response = response) => 
     }
 
     // Si llega a este punto implica que el usuario logueado es el mismo del body del request de publicacion
-    // Validamos que hay un archivo en el request
+    let files;
     if (!request.files || Object.keys(request.files) === 0) {
-        return response.status(HTTP_BAD_REQUEST).json({
-            ok: false,
-            msg: 'No se encontro ningun archivo'
-        });
+        files = null;
+    } else {
+        files = request.files.image;
     }
-
-    const files = request.files.image;
 
     try {
         // Creamos la instancia del Modelo de Publicacion con los datos del body
@@ -124,8 +121,11 @@ const registarPublicacionMultipleFiles = async(request, response = response) => 
             usuario: body.usuario
         });
 
-        // Guardamos los archivos en el directorio
-        uploadFiles(files, 'publicaciones', publicacion);
+        // De existir archvos los guardamos
+        if (files) {
+            // Guardamos los archivos en el directorio
+            uploadFiles(files, 'publicaciones', publicacion);
+        }
 
         await publicacion.save();
 
@@ -172,8 +172,12 @@ const deletePublicacion = async(request, response = response) => {
         const srcImagen = publicacion.srcImagen;
         await Publicacion.findByIdAndDelete(idPublicacion);
         console.log('Publicacion con id: ' + idPublicacion + " eliminada con exito!");
-        // Eliminamos la imagen del post del servidor
-        deleteFile('publicaciones', srcImagen);
+        if (srcImagen.length > 0) {
+            for (let i = 0; i < srcImagen.length; i ++) {
+                // Eliminamos la imagen del post del servidor
+                deleteFile('publicaciones', srcImagen[i]);
+            }
+        }
         response.status(HTTP_NOT_CONTENT).json({
             ok: true,
             msg: 'Eliminado con exito!'
