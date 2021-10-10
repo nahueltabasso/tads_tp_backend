@@ -11,7 +11,7 @@ const PublicacionSchema = Schema({
         required: true
     },
     srcImagen: {
-        type: String,
+        type: [String],
         required: true
     },
     createAt: {

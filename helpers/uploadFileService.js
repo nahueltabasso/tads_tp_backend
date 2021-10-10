@@ -48,6 +48,40 @@ const uploadFile = async(file, tipo, registro) => {
     });
 }
 
+const uploadFiles = async(files, tipo, registro) => {
+    console.log('Archivo a procesar \n', files);
+    // Procesar el archivo
+    let nombreArchivo;
+    for (let i = 0; i < files.length; i++) {
+        const nombreCortado = files[i].name.split('.');
+        const extensionArchivo = nombreCortado[nombreCortado.length - 1];
+
+        const extencionesValidas = EXTENSIONES_VALIDAS;
+        if (!extencionesValidas.includes(extensionArchivo)) {
+            return 'Extension no Valida';
+        }
+
+        // Generamos le nombre del archivo
+        nombreArchivo = `${uuidv4()}.${extensionArchivo}`;
+        registro.srcImagen.push(nombreArchivo);
+
+        // Path para almacenar la imagen
+        const path = `./uploads/${tipo}/${nombreArchivo}`;
+        console.log(path);
+        nombreArchivo = '';
+
+        // Mover la imagen hacia el directorio
+        files[i].mv(path, (error) => {
+            if (error) {
+                console.log(error);
+                throw new Error("Ocurrio un error al momento de guardarse el archivo!");
+            }
+        });
+    }
+
+    console.log(registro.srcImagen);
+}
+
 const deleteFile = (tipo, src) => {
     const path = `./uploads/${tipo}/${src}`;
     if (fs.existsSync(path)) {
@@ -71,6 +105,7 @@ const getFile = (tipo, file) => {
 
 module.exports = {
     uploadFile,
+    uploadFiles,
     deleteFile,
     getFile
 }

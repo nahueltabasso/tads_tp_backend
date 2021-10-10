@@ -17,7 +17,7 @@ const expressFileUpload = require('express-fileupload');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { registarPublicacion, deletePublicacion, updatePublicacion, getById, findAllByUsuario, findAllByUsuarioPaginacion, getPublicacionesAmigos } = require('../controllers/publicacionController');
+const { registarPublicacion, deletePublicacion, updatePublicacion, getById, findAllByUsuario, findAllByUsuarioPaginacion, getPublicacionesAmigos, registarPublicacionMultipleFiles } = require('../controllers/publicacionController');
 
 const router = Router();
 // Lectura y parseo del body
@@ -32,6 +32,17 @@ router.post('/:tipo', [
     validarCampos
     ],
     registarPublicacion
+);
+
+router.post('/multiple-files/:tipo', [
+        validarJWT,
+        check('titulo', 'El titulo de la publicacion es requerido').not().isEmpty(),
+        check('descripcion', "La descripcion de la publicacion es requerido").not().isEmpty(),
+        check('usuario', 'El usuario de la publicacion es requerido').not().isEmpty(),
+        check('usuario', 'Usuario no valido').isMongoId(),
+        validarCampos
+    ],
+    registarPublicacionMultipleFiles
 );
 
 router.put('/:id', [

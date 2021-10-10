@@ -17,7 +17,7 @@ _________ _______  ______   _______       _______  _______  ______       _______
 const { response } = require('express');
 const { HTTP_UNAUTHORIZED, HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST, HTTP_NOT_FOUND, HTTP_NOT_CONTENT, HTTP_STATUS_OK } = require('../utils/constantes');
 const { MSG_ERROR_ADMINISTRADOR } = require('../utils/mensajes');
-const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
+const { uploadFile, deleteFile, uploadFiles } = require('../helpers/uploadFileService');
 const Publicacion = require('../models/publicacion');
 const Reaccion = require('../models/reaccion');
 const { httpError } = require('../helpers/handleError');
@@ -67,6 +67,65 @@ const registarPublicacion = async(request, response = response) => {
 
         // Guardamos el archivo en el directorio
         uploadFile(file, 'publicaciones', publicacion);
+
+        await publicacion.save();
+
+        response.status(HTTP_CREATED).json({
+            ok: true,
+            msg: 'Publicacion subida correctamente!',
+            publicacion: publicacion
+        });
+    } catch (error) {
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
+    }
+}
+
+/*
+    ########## REGISTRAR PUBLICACION MULTIPLE FILES ##########
+
+    Registra la publicacion con varios archivos y retorna la publicacion creada
+ */
+const registarPublicacionMultipleFiles = async(request, response = response) => {
+    let body = request.body;
+    const idUsuarioLogueado = request.id;
+    const tipo = request.params.tipo;
+
+    if (idUsuarioLogueado !== body.usuario) {
+        return response.status(HTTP_UNAUTHORIZED).json({
+            ok: false,
+            msg: 'Se intenta acceder a los datos de otro usuario'
+        });
+    }
+
+    const tiposValidos = ['publicaciones', 'perfiles'];
+    if (!tiposValidos.includes(tipo)) {
+        return response.status(HTTP_BAD_REQUEST).json({
+            ok: false,
+            msg: 'Tipo Invalido'
+        });
+    }
+
+    // Si llega a este punto implica que el usuario logueado es el mismo del body del request de publicacion
+    // Validamos que hay un archivo en el request
+    if (!request.files || Object.keys(request.files) === 0) {
+        return response.status(HTTP_BAD_REQUEST).json({
+            ok: false,
+            msg: 'No se encontro ningun archivo'
+        });
+    }
+
+    const files = request.files.image;
+
+    try {
+        // Creamos la instancia del Modelo de Publicacion con los datos del body
+        let publicacion = new Publicacion({
+            titulo: body.titulo,
+            descripcion: body.descripcion,
+            usuario: body.usuario
+        });
+
+        // Guardamos los archivos en el directorio
+        uploadFiles(files, 'publicaciones', publicacion);
 
         await publicacion.save();
 
@@ -290,6 +349,7 @@ const getPublicacionesAmigos = async(request, response = response) => {
 
 module.exports = {
     registarPublicacion,
+    registarPublicacionMultipleFiles,
     deletePublicacion,
     updatePublicacion,
     getById,
