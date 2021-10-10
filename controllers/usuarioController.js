@@ -30,6 +30,7 @@ const {
 } = require("../utils/constantes");
 const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
 const { httpError } = require('../helpers/handleError');
+const { getIdsUsuariosAmigos } = require('../helpers/usuarioHelper')
 
 /*
     ########## LISTAR USUARIOS ##########
@@ -279,6 +280,21 @@ const getCantidadAmigosAndCantidadPublicacionesByUsuario = async(request, respon
     }
 }
 
+const getAmigos = async(request, response = Response) => {
+    const idUsuarioLogueado = request.params.id;
+    try {
+        const idsAmigos = await getIdsUsuariosAmigos(idUsuarioLogueado);
+
+        const usuariosAmigos = await Usuario.find().where('_id').in(idsAmigos);
+        response.status(HTTP_STATUS_OK).json({
+            ok: true,
+            amigos: usuariosAmigos
+        });
+    } catch (error) {
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
+    }
+}
+
 const actualizarCamposUsuarios = (usuario = Usuario, usuarioBody) => {
     usuario.email = usuarioBody.email;
     usuario.nombreApellido = usuarioBody.nombreApellido;
@@ -300,5 +316,6 @@ module.exports = {
     getUsuarioById,
     updateProfilePhoto,
     search,
-    getCantidadAmigosAndCantidadPublicacionesByUsuario
+    getCantidadAmigosAndCantidadPublicacionesByUsuario,
+    getAmigos
 }
