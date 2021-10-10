@@ -57,7 +57,17 @@ const generarToken = (id, email) => {
     });
 }
 
+const comprobarJwtToken = (token = '') => {
+    try {
+        const { id } = jwt.verify(token, process.env.JWT_SECRET)
+        return [ true, id ];
+    } catch (error) {
+        return [false, null ];
+    }
+}
+
 module.exports = {
     generarJWT,
-    generarToken
+    generarToken,
+    comprobarJwtToken
 }

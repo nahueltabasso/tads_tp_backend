@@ -79,6 +79,10 @@ const UsuarioSchema = Schema({
     primerLogin: {
         type: Number,
         default: 0
+    },
+    online: {
+        type: Boolean,
+        default: false
     }
 });
 

@@ -21,6 +21,12 @@ const getMenu = (role) => {
                 submenu: []
             },
             {
+                titulo: 'Chat',
+                icono: 'nav-icon fab fa-facebook-messenger',
+                url: 'chat',
+                submenu: []
+            },
+            {
                 titulo: 'Buscar',
                 icono: 'nav-icon fas fa-search-plus',
                 url: 'search',

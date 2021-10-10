@@ -19,6 +19,7 @@ const SolicitudAmistad = require('../models/solicitudAmistad');
 const Usuario = require('../models/usuario');
 const { HTTP_CREATED, HTTP_STATUS_OK, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND, HTTP_NOT_CONTENT } = require('../utils/constantes');
 const { httpError } = require('../helpers/handleError');
+const { getIdsUsuariosAmigos } = require('../helpers/usuarioHelper');
 
 /*
     ########## ENVIAR SOLICITUD DE AMISTAD ##########
@@ -172,6 +173,7 @@ const obtenerIdsAmigos = async(request, response = response) => {
 
     try {
         // Obtenemos los amigos del usuario
+        /*
         let amigosDB = await SolicitudAmistad.find({
             $or: [
                 {$and: [{ usuarioEmisor: idUsuario }, { estado: true }]},
@@ -191,7 +193,11 @@ const obtenerIdsAmigos = async(request, response = response) => {
                     idsAmigosResponse.push(amigosDB[i].usuarioReceptor.id);
                 }
             }
-        }
+        }*/
+
+
+        let idsAmigosResponse = [];
+        idsAmigosResponse = await getIdsUsuariosAmigos(idUsuario);
 
         response.status(HTTP_STATUS_OK).json({
             ok: true,
