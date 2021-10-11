@@ -18,6 +18,7 @@ const { EXTENSIONES_VALIDAS } = require('../utils/constantes');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');   // FileSystem permite leer las carpetas y los archivos
+const sharp = require('sharp');
 
 const uploadFile = async(file, tipo, registro) => {
     console.log('Archivo a procesar \n', file);
@@ -46,6 +47,7 @@ const uploadFile = async(file, tipo, registro) => {
             throw new Error("Ocurrio un error al momento de guardarse el archivo!");
         }
     });
+    await fileOptimizer(path, nombreArchivo, 300);
 }
 
 const uploadFiles = async(files, tipo, registro) => {
@@ -100,6 +102,19 @@ const getFile = (tipo, file) => {
     } else {
         // Implica que existe la imagen en el servidor
         return pathFile;
+    }
+}
+
+const fileOptimizer = async(path, fileName, size = 300) => {
+    try {
+        await sharp(path)
+            .resize({
+                width: 150,
+                height: 97
+            })
+            .toFile(`./uploads/optimizer/${fileName}`);
+    } catch (error) {
+        console.log(error);
     }
 }
 
