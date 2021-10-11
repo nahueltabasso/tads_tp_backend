@@ -41,7 +41,7 @@ const uploadFile = async(file, tipo, registro) => {
     console.log(path);
 
     // Mover la imagen hacia el directorio
-    return sharp(file).resize(100).toFile(path);
+    await fileOptimizer(file.data, path, 500);
 }
 
 const uploadFiles = async(files, tipo, registro) => {
@@ -67,12 +67,7 @@ const uploadFiles = async(files, tipo, registro) => {
         nombreArchivo = '';
 
         // Mover la imagen hacia el directorio
-        files[i].mv(path, (error) => {
-            if (error) {
-                console.log(error);
-                throw new Error("Ocurrio un error al momento de guardarse el archivo!");
-            }
-        });
+        await fileOptimizer(files[i].data, path, 500);
     }
 
     console.log(registro.srcImagen);
@@ -99,14 +94,13 @@ const getFile = (tipo, file) => {
     }
 }
 
-const fileOptimizer = async(path, fileName, size = 300) => {
+const fileOptimizer = async(file, path, size = 300) => {
     try {
-        await sharp(path)
+        await sharp(file)
             .resize({
-                width: 150,
-                height: 97
+                width: size
             })
-            .toFile(`./uploads/optimizer/${fileName}`);
+            .toFile(path);
     } catch (error) {
         console.log(error);
     }
