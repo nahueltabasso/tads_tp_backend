@@ -41,13 +41,7 @@ const uploadFile = async(file, tipo, registro) => {
     console.log(path);
 
     // Mover la imagen hacia el directorio
-    file.mv(path, (error) => {
-        if (error) {
-            console.log(error);
-            throw new Error("Ocurrio un error al momento de guardarse el archivo!");
-        }
-    });
-    await fileOptimizer(path, nombreArchivo, 300);
+    return sharp(file).resize(100).toFile(path);
 }
 
 const uploadFiles = async(files, tipo, registro) => {
