@@ -17,13 +17,16 @@ const expressFileUpload = require('express-fileupload');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { registarPublicacion, deletePublicacion, updatePublicacion, getById, findAllByUsuario, findAllByUsuarioPaginacion, getPublicacionesAmigos, registarPublicacionMultipleFiles } = require('../controllers/publicacionController');
+const { registarPublicacion, deletePublicacion, updatePublicacion, getById, findAllByUsuario, findAllByUsuarioPaginacion, getPublicacionesAmigos, registrarPublicacionCloudinary } = require('../controllers/publicacionController');
 
 const router = Router();
 // Lectura y parseo del body
-router.use(expressFileUpload());
+router.use(expressFileUpload({
+    useTempFiles : true,
+    tempFileDir : '/uploads/'
+}));
 
-router.post('/:tipo', [
+router.post('/cloudinary/:tipo', [
     validarJWT,
     check('titulo', 'El titulo de la publicacion es requerido').not().isEmpty(),
     check('descripcion', "La descripcion de la publicacion es requerido").not().isEmpty(),
@@ -34,7 +37,7 @@ router.post('/:tipo', [
     registarPublicacion
 );
 
-router.post('/multiple-files/:tipo', [
+router.post('/cloudinary-multiple/:tipo', [
         validarJWT,
         check('titulo', 'El titulo de la publicacion es requerido').not().isEmpty(),
         check('descripcion', "La descripcion de la publicacion es requerido").not().isEmpty(),
@@ -42,7 +45,7 @@ router.post('/multiple-files/:tipo', [
         check('usuario', 'Usuario no valido').isMongoId(),
         validarCampos
     ],
-    registarPublicacionMultipleFiles
+    registrarPublicacionCloudinary
 );
 
 router.put('/:id', [

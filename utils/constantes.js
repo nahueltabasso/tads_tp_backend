@@ -12,6 +12,9 @@ const ROLE_USER = 'ROLE_USER';
 const MSG_ERROR_ADMINISTRADOR = 'Error inesperado... Consultar con el Administrador';
 const EXTENSIONES_VALIDAS = ['png', 'jpg', 'jpeg', 'gif'];
 
+// Tamaño de fotos de perfil 180px x 180px
+const SIZE_PERFIL_PHOTO = [180, 180];
+
 module.exports = {
     HTTP_STATUS_OK,
     HTTP_CREATED,
@@ -22,5 +25,6 @@ module.exports = {
     HTTP_INTERNAL_SERVER_ERROR,
     ROLE_USER,
     MSG_ERROR_ADMINISTRADOR,
-    EXTENSIONES_VALIDAS
+    EXTENSIONES_VALIDAS,
+    SIZE_PERFIL_PHOTO
 }

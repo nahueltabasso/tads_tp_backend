@@ -14,6 +14,17 @@ const PublicacionSchema = Schema({
         type: [String],
         required: true
     },
+    srcImagenWeb: {
+        type: [String],
+        required: true
+    },
+    srcImagenMobile: {
+        type: [String],
+        required: true
+    },
+    publicIds: {
+        type: [String]
+    },
     createAt: {
         type: Date,
         default: new Date()

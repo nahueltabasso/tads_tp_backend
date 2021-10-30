@@ -26,7 +26,8 @@ const {
     HTTP_CREATED,
     HTTP_BAD_REQUEST,
     HTTP_NOT_CONTENT,
-    HTTP_UNAUTHORIZED
+    HTTP_UNAUTHORIZED,
+    SIZE_PERFIL_PHOTO
 } = require("../utils/constantes");
 const { uploadFile, deleteFile } = require('../helpers/uploadFileService');
 const { httpError } = require('../helpers/handleError');
@@ -209,7 +210,7 @@ const updateProfilePhoto = async(request, response = response) => {
             deleteFile('perfiles', usuario.srcImagen);
         }
         // Guardamos el archivo
-        uploadFile(file, tipo, usuario);
+        uploadFile(file, tipo, usuario, SIZE_PERFIL_PHOTO);
 
         const usuarioActualizado = await Usuario.findByIdAndUpdate(idUsuario, usuario, { new: true });
         const nombreArchivo = usuarioActualizado.srcImagen;

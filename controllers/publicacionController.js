@@ -17,7 +17,7 @@ _________ _______  ______   _______       _______  _______  ______       _______
 const { response } = require('express');
 const { HTTP_UNAUTHORIZED, HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_BAD_REQUEST, HTTP_NOT_FOUND, HTTP_NOT_CONTENT, HTTP_STATUS_OK } = require('../utils/constantes');
 const { MSG_ERROR_ADMINISTRADOR } = require('../utils/mensajes');
-const { uploadFile, deleteFile, uploadFiles } = require('../helpers/uploadFileService');
+const { uploadFileToCDN, deleteFile, uploadMultipleFileToCDN, deleteFileFromCloudinary } = require('../helpers/uploadFileService');
 const Publicacion = require('../models/publicacion');
 const Reaccion = require('../models/reaccion');
 const { httpError } = require('../helpers/handleError');
@@ -66,7 +66,7 @@ const registarPublicacion = async(request, response = response) => {
         });
 
         // Guardamos el archivo en el directorio
-        uploadFile(file, 'publicaciones', publicacion);
+        await uploadFileToCDN(file, 'publicaciones', publicacion);
 
         await publicacion.save();
 
@@ -83,9 +83,10 @@ const registarPublicacion = async(request, response = response) => {
 /*
     ########## REGISTRAR PUBLICACION MULTIPLE FILES ##########
 
-    Registra la publicacion con varios archivos y retorna la publicacion creada
+    Registra la publicacion y la publicacion creada
+    Almacena en Cloudinary los archivos del request.
  */
-const registarPublicacionMultipleFiles = async(request, response = response) => {
+const registrarPublicacionCloudinary = async(request, response = response) => {
     let body = request.body;
     const idUsuarioLogueado = request.id;
     const tipo = request.params.tipo;
@@ -124,7 +125,7 @@ const registarPublicacionMultipleFiles = async(request, response = response) => 
         // De existir archvos los guardamos
         if (files) {
             // Guardamos los archivos en el directorio
-            uploadFiles(files, 'publicaciones', publicacion);
+            await uploadMultipleFileToCDN(files, 'publicaciones', publicacion);
         }
 
         await publicacion.save();
@@ -138,6 +139,7 @@ const registarPublicacionMultipleFiles = async(request, response = response) => 
         httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
 }
+
 
 /*
     ########## ELIMINAR PUBLICACION ##########
@@ -169,15 +171,10 @@ const deletePublicacion = async(request, response = response) => {
         await Reaccion.deleteMany({publicacion: publicacion.id});
 
         // Si pasa la validacion de seguridad de los datos, eliminamos de la base de datos
-        const srcImagen = publicacion.srcImagen;
+        await deleteFileFromCloudinary(publicacion.publicIds);
         await Publicacion.findByIdAndDelete(idPublicacion);
         console.log('Publicacion con id: ' + idPublicacion + " eliminada con exito!");
-        if (srcImagen.length > 0) {
-            for (let i = 0; i < srcImagen.length; i ++) {
-                // Eliminamos la imagen del post del servidor
-                deleteFile('publicaciones', srcImagen[i]);
-            }
-        }
+
         response.status(HTTP_NOT_CONTENT).json({
             ok: true,
             msg: 'Eliminado con exito!'
@@ -353,11 +350,11 @@ const getPublicacionesAmigos = async(request, response = response) => {
 
 module.exports = {
     registarPublicacion,
-    registarPublicacionMultipleFiles,
     deletePublicacion,
     updatePublicacion,
     getById,
     findAllByUsuario,
     findAllByUsuarioPaginacion,
-    getPublicacionesAmigos
+    getPublicacionesAmigos,
+    registrarPublicacionCloudinary
 }
