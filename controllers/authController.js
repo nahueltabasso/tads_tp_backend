@@ -19,7 +19,7 @@ const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
 const Rol = require('../models/rol');
 const { httpError } = require('../helpers/handleError');
-const { generarJWT } = require('../helpers/jwt');
+const { generarJWT, generarToken } = require('../helpers/jwt');
 const {
     HTTP_BAD_REQUEST,
     HTTP_CREATED,
@@ -67,7 +67,7 @@ const registrarUsuario = async(request, response = response) => {
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync(password, salt);
         // Generamos el token de activacion de la cuenta
-        const tokenActivacion = hashString(email);
+        const tokenActivacion = await generarToken(1, email);
         usuario.tokenActivacion = tokenActivacion;
         // Persistimos el objeto en la base de datos
         await usuario.save();
