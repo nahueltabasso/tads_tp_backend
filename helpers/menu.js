@@ -34,6 +34,17 @@ const getMenu = (role) => {
             }
         ];
 
+    } else {
+        menu = [
+
+            {
+                titulo: 'Usuarios',
+                icono: 'nav-icon fas fa-user-friends',
+                url: '/usuarios',
+                submenu: []
+            }
+
+        ];
     }
 
     return menu;
