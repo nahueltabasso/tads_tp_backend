@@ -40,7 +40,7 @@ const getMenu = (role) => {
             {
                 titulo: 'Usuarios',
                 icono: 'nav-icon fas fa-user-friends',
-                url: '/usuarios',
+                url: 'mantenedor-usuarios',
                 submenu: []
             }
 
