@@ -53,6 +53,7 @@ app.use('/api/file', require('./routes/fileRoutes'));
 app.use('/api/solicitudes', require('./routes/solicitudAmistadRoutes'));
 app.use('/api/reaccion', require('./routes/reaccionRoutes'));
 app.use('/api/mensaje-chat', require('./routes/mensajeChatRoutes'));
+app.use('/api/comentario', require('./routes/comentarioRoutes'));
 
 server.listen(process.env.PORT, (err) => {
     if (err) throw new Error(err);
