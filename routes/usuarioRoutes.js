@@ -16,7 +16,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const expressFileUpload = require('express-fileupload');
 const { validarCampos } = require('../middlewares/validarCampos');
-const { validarJWT } = require('../middlewares/validarJwt');
+const { validarJWT, validarAdminRole } = require('../middlewares/validarJwt');
 const { getAll, updateUsuario, deleteUsuario, getEstadosSentimentales, getUsuarioById, updateProfilePhoto, search, getCantidadAmigosAndCantidadPublicacionesByUsuario, getAmigos } = require('../controllers/usuarioController');
 
 const router = Router();
@@ -48,5 +48,8 @@ router.get('/search/:termino', validarJWT, search);
 router.get('/getCantidadPublicacionesAndCantidadAmigos/:id', validarJWT, getCantidadAmigosAndCantidadPublicacionesByUsuario);
 
 router.get('/getAmigos/:id', validarJWT, getAmigos);
+
+// Endpoint test middleware de adminRole
+router.get('/prueba-adminRole/:termino', [validarJWT, validarAdminRole], search);
 
 module.exports = router;
