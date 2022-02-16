@@ -18,7 +18,7 @@ const { response } = require('express');
 const Comentario = require('../models/comentario');
 const Usuario = require('../models/usuario');
 const Publicacion = require('../models/publicacion');
-const { HTTP_NOT_FOUND, HTTP_CREATED, HTTP_STATUS_OK, HTTP_NOT_CONTENT } = require('../utils/constantes');
+const { HTTP_NOT_FOUND, HTTP_CREATED, HTTP_STATUS_OK, HTTP_NOT_CONTENT, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR } = require('../utils/constantes');
 const { httpError } = require('../helpers/handleError');
 
 /*
@@ -27,12 +27,12 @@ const { httpError } = require('../helpers/handleError');
     Persiste y retorna un comentario sobre una publicacion de un usuario
  */
 const registarComentario = async(request, response = response) => {
-    const idUsuario = request.params.idUsuario;
-    const idPublicacion = request.params.idPublicacion;
-
+    
     try {
         // Validamos si existe la publicacion
-        const publicacionDB = await Publicacion.findById(idPublicacion);
+        let comentario = new Comentario(request.body);
+        const publicacionDB = await Publicacion.findById(comentario.publicacion);
+        
         if (!publicacionDB) {
             return response.status(HTTP_NOT_FOUND).json({
                 ok: false,
@@ -40,7 +40,7 @@ const registarComentario = async(request, response = response) => {
             });
         }
         // Validamos si existe el usuario
-        const usuarioDB = await Usuario.findById(idUsuario);
+        const usuarioDB = await Usuario.findById(comentario.usuario);
         if (!usuarioDB) {
             return response.status(HTTP_NOT_FOUND).json({
                 ok: false,
@@ -49,10 +49,6 @@ const registarComentario = async(request, response = response) => {
         }
 
         // Registramos el comentario
-        let comentario = new Comentario();
-        comentario.usuario = idUsuario;
-        comentario.publicacion = idPublicacion;
-
         comentario = await comentario.save();
 
         response.status(HTTP_CREATED).json({

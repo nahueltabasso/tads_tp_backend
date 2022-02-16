@@ -18,11 +18,11 @@ const { registarComentario, getCantidadComentariosByPublicacion, isUsuarioComent
 
 const router = Router();
 
-router.post('/:idPublicacion/:idUsuario', validarJWT, registarComentario);
+router.post('/', validarJWT, registarComentario);
 
-router.get('/getCantidadReaccionesByPublicacion/:idPublicacion', validarJWT, getCantidadComentariosByPublicacion);
+router.get('/getCantidadComentariosByPublicacion/:idPublicacion', validarJWT, getCantidadComentariosByPublicacion);
 
-router.get('/isUsuarioReaccion/:idPublicacion/:idUsuario', validarJWT, isUsuarioComentarioPublicacion);
+router.get('/isUsuarioComentario/:idPublicacion/:idUsuario', validarJWT, isUsuarioComentarioPublicacion);
 
 router.delete('/:idPublicacion/:idUsuario', validarJWT, deleteComentario);
 
