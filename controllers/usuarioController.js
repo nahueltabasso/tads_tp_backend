@@ -309,6 +309,34 @@ const actualizarCamposUsuarios = (usuario = Usuario, usuarioBody) => {
     return usuario;
 }
 
+const findAllUsuariosPaginados = async(request, response = response) => {
+    const idUsuarioLogueado = request.params.idUsuario;
+    const  { page, size } = request.query;
+    const populate = [
+        { path: 'usuario', select: 'id nombreApellido srcImagen email' }
+    ];
+    const options = {
+        populate,
+        limit: size,
+        page: page,
+        sort: { 'createAt': -1 }
+    }
+    let criterio = { usuario: idUsuarioLogueado }
+    try {
+
+        Usuario.paginate(criterio, options)
+            .then((data) => {
+                console.log(data);
+                response.status(HTTP_STATUS_OK).json({
+                    ok: true,
+                    result: data
+                });
+            });
+    } catch (error) {
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
+    }
+}
+
 module.exports = {
     getAll,
     updateUsuario,
@@ -318,5 +346,6 @@ module.exports = {
     updateProfilePhoto,
     search,
     getCantidadAmigosAndCantidadPublicacionesByUsuario,
-    getAmigos
+    getAmigos,
+    findAllUsuariosPaginados
 }
