@@ -14,7 +14,7 @@ _________ _______  ______   _______       _______  _______  ______       _______
 
 const { Router } = require('express');
 const { validarJWT } = require('../middlewares/validarJwt');
-const { registarComentario, getCantidadComentariosByPublicacion, isUsuarioComentarioPublicacion, deleteComentario } = require('../controllers/comentarioController');
+const { registarComentario, getCantidadComentariosByPublicacion, isUsuarioComentarioPublicacion, deleteComentario, getComentariosByPublicacionPaginado } = require('../controllers/comentarioController');
 
 const router = Router();
 
@@ -25,5 +25,7 @@ router.get('/getCantidadComentariosByPublicacion/:idPublicacion', validarJWT, ge
 router.get('/isUsuarioComentario/:idPublicacion/:idUsuario', validarJWT, isUsuarioComentarioPublicacion);
 
 router.delete('/:idPublicacion/:idUsuario', validarJWT, deleteComentario);
+
+router.get('/getComentariosByPublicacion/:idPublicacion', validarJWT, getComentariosByPublicacionPaginado);
 
 module.exports = router;

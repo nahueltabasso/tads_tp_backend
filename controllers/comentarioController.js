@@ -139,9 +139,37 @@ const deleteComentario = async(request, response = response) => {
     }
 }
 
+
+/*
+    ########## OBTENER COMENTARIOS BY PUBLICACION ##########
+
+    Retorna listado de comentarios de una publicacion paginados
+ */
+const getComentariosByPublicacionPaginado = async(request, response = response) => {
+    const desde = Number(request.query.desde) || 0;
+    const totalPorPagina = Number(request.query.totalPorPagina) || 5;
+    const idPublicacion = request.params.idPublicacion;
+
+    try {
+        const comentarios = await Comentario.find({ 'publicacion': idPublicacion })
+            .skip(desde)
+            .limit(totalPorPagina)
+            .populate('usuario', 'id nombreApellido srcImagen')
+            .sort({ 'createAt': 1});
+
+        response.status(HTTP_STATUS_OK).json({
+            ok: true,
+            comentarios: comentarios
+        });
+    } catch (error) {
+        httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
+    }
+}
+
 module.exports = {
     registarComentario,
     getCantidadComentariosByPublicacion,
     isUsuarioComentarioPublicacion,
-    deleteComentario
+    deleteComentario,
+    getComentariosByPublicacionPaginado
 }
