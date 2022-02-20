@@ -20,6 +20,7 @@ const { MSG_ERROR_ADMINISTRADOR } = require('../utils/mensajes');
 const { uploadFileToCDN, deleteFile, uploadMultipleFileToCDN, deleteFileFromCloudinary } = require('../helpers/uploadFileService');
 const Publicacion = require('../models/publicacion');
 const Reaccion = require('../models/reaccion');
+const Comentario = require('../models/comentario');
 const { httpError } = require('../helpers/handleError');
 
 /*
@@ -169,6 +170,9 @@ const deletePublicacion = async(request, response = response) => {
 
         // Eliminamos las reacciones de la publicacion
         await Reaccion.deleteMany({publicacion: publicacion.id});
+
+        // Eliminamos los comentarios de la publicacion
+        await Comentario.deleteMany({publicacion: publicacion.id});
 
         // Si pasa la validacion de seguridad de los datos, eliminamos de la base de datos
         await deleteFileFromCloudinary(publicacion.publicIds);
