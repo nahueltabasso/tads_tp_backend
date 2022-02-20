@@ -191,6 +191,16 @@ const deleteFileFromCloudinary = async(idsFiles) => {
     }
 }
 
+const deleteFilesFromPublicaciones = async(publicaciones) => {
+    let idsFiles = [];
+    publicaciones.forEach(p => {
+        if (p.publicIds !== null && p.publicIds.length > 0) {
+            p.publicIds.forEach(id => idsFiles.push(id));
+        }
+    });
+    await deleteFileFromCloudinary(idsFiles);
+}
+
 const getFile = (tipo, file) => {
     const pathFile = path.join(__dirname, `../uploads/${tipo}/${file}`);
 
@@ -224,5 +234,6 @@ module.exports = {
     getFile,
     uploadMultipleFileToCDN,
     uploadFileToCDN,
-    deleteFileFromCloudinary
+    deleteFileFromCloudinary,
+    deleteFilesFromPublicaciones
 }

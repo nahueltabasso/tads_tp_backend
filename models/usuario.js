@@ -1,4 +1,9 @@
 const { Schema, model } = require('mongoose');
+const Publicacion = require('./publicacion');
+const Comentario = require('./comentario');
+const Reaccion = require('./reaccion');
+const SolicitudAmistad = require('./solicitudAmistad');
+const { deleteFilesFromPublicaciones } = require('../helpers/uploadFileService');
 
 const UsuarioSchema = Schema({
     nombreApellido: {
@@ -90,6 +95,45 @@ UsuarioSchema.method('toJSON', function (){
     const { __v, _id, password, ...object } = this.toObject();
     object.id = _id;
     return object;
+});
+
+UsuarioSchema.pre('deleteOne', { query: true }, async function(done, next) {
+    console.info("Entra al pre DeleteOneUsuario()");
+    const id = this.getFilter()["_id"]
+    // Recupero todas las publicaciones del usuario
+    const publicaciones = await Publicacion.find({ usuario: id });
+    let idsPublicaciones = [];
+    publicaciones.forEach(p => idsPublicaciones.push(p.id));
+    // Eliminamos los archivos de cloudinary
+    await deleteFilesFromPublicaciones(publicaciones);
+    console.info("Archivos del usuario ID: " + id + " eliminados de Cloudinary");
+    await Publicacion.deleteMany({ usuario: id});
+    console.info("Publicaciones del usuario ID: " + id + " eliminadas!");
+
+    await Reaccion.deleteMany({
+        $or: [
+            {$and: [{ usuario: id }]},
+            {$and: [{ publicacion: { $in: idsPublicaciones } }]}
+        ]
+    });
+    console.info("Reacciones del usuario ID: " + id + " eliminadas!");
+
+    await Comentario.deleteMany({
+        $or: [
+            {$and: [{ usuario: id }]},
+            {$and: [{ publicacion: { $in: idsPublicaciones } }]}
+        ]
+    });
+    console.info("Comentarios del usuario ID: " + id + " eliminadas!");
+
+    await SolicitudAmistad.deleteMany({
+        $or: [
+            {$and: [{ usuarioEmisor: id }]},
+            {$and: [{ usuarioReceptor: id }]}
+        ]
+    });
+    console.log("Solicitudes del usuario ID: " + id + " eliminadas!");
+    next();
 });
 
 module.exports = model('Usuario', UsuarioSchema);

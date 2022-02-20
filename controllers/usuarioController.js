@@ -109,14 +109,19 @@ const deleteUsuario = async(request, response = response) => {
             });
         }
 
-        // Eliminamos el usuario de la base de datos
-        await Usuario.findByIdAndDelete(id);
-        console.log('Usuario con id: ' + id + " eliminado con exito!");
+        if (!usuarioDB.google) {
+            deleteFile('perfiles', usuarioDB.srcImagen);
+        }
 
+        // Eliminamos el usuario de la base de datos
+        const result = await Usuario.deleteOne({ _id : id });
+
+        console.log('Usuario con id: ' + id + " eliminado con exito!");
         response.status(HTTP_NOT_CONTENT).json({
             ok: true,
             msg: 'Usuario borrado con exito!'
         });
+
     } catch (error) {
         httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }
