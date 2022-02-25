@@ -315,28 +315,25 @@ const actualizarCamposUsuarios = (usuario = Usuario, usuarioBody) => {
 }
 
 const findAllUsuariosPaginados = async(request, response = response) => {
-    const idUsuarioLogueado = request.params.idUsuario;
-    const  { page, size } = request.query;
-    const populate = [
-        { path: 'usuario', select: 'id nombreApellido srcImagen email' }
-    ];
-    const options = {
-        populate,
-        limit: size,
-        page: page,
-        sort: { 'createAt': -1 }
-    }
-    let criterio = { usuario: idUsuarioLogueado }
+    console.log("Llega a findAllUsuariosPaginados");
+    const desde = Number(request.query.desde) || 0;
+    const totalPorPagina = Number(request.query.totalPorPagina) || 5;
     try {
+        console.log("desde y total: ", desde, totalPorPagina);
+        const [ usuarios, totalUsuarios ] = await Promise.all([
+            Usuario.find({}, 'nombreApellido email telefono fechaNacimiento genero srcImagen biografia hobbies google facebook')
+                .skip(desde)
+                .limit(totalPorPagina),
 
-        Usuario.paginate(criterio, options)
-            .then((data) => {
-                console.log(data);
-                response.status(HTTP_STATUS_OK).json({
-                    ok: true,
-                    result: data
-                });
-            });
+            Usuario.find()
+                .countDocuments()
+        ]);
+    
+        response.status(HTTP_STATUS_OK).json({
+            ok: true,
+            usuarios: usuarios,
+            totalUsuarios: totalUsuarios
+        });
     } catch (error) {
         httpError(response, error, HTTP_INTERNAL_SERVER_ERROR, MSG_ERROR_ADMINISTRADOR);
     }

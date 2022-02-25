@@ -52,6 +52,6 @@ router.get('/getAmigos/:id', validarJWT, getAmigos);
 // Endpoint test middleware de adminRole
 router.get('/prueba-adminRole/:termino', [validarJWT, validarAdminRole], search);
 
-router.get('/getAllUsuariosPaginados/', [ validarJWT, validarAdminRole ], findAllUsuariosPaginados);
+router.get('/getAllUsuariosPaginados',  [validarJWT, validarAdminRole] , findAllUsuariosPaginados);
 
 module.exports = router;
