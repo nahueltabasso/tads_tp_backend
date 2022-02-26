@@ -23,7 +23,7 @@ const router = Router();
 // Lectura y parseo del body
 router.use(expressFileUpload());
 
-router.get('/', validarJWT, getAll);
+router.get('/', [validarJWT, validarAdminRole], getAll);
 
 router.put('/:id', [
     validarJWT,
@@ -52,6 +52,6 @@ router.get('/getAmigos/:id', validarJWT, getAmigos);
 // Endpoint test middleware de adminRole
 router.get('/prueba-adminRole/:termino', [validarJWT, validarAdminRole], search);
 
-router.get('/getAllUsuariosPaginados',  [validarJWT, validarAdminRole] , findAllUsuariosPaginados);
+router.get('/getAllUsuarios/paginados',  [validarJWT, validarAdminRole] , findAllUsuariosPaginados);
 
 module.exports = router;

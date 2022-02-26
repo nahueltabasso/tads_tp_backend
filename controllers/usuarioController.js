@@ -318,9 +318,10 @@ const findAllUsuariosPaginados = async(request, response = response) => {
     console.log("Llega a findAllUsuariosPaginados");
     const desde = Number(request.query.desde) || 0;
     const totalPorPagina = Number(request.query.totalPorPagina) || 5;
+    //const usuarios = await Usuario.find({}, 'nombreApellido email telefono fechaNacimiento genero srcImagen biografia hobbies google facebook');
+
     try {
-        console.log("desde y total: ", desde, totalPorPagina);
-        const [ usuarios, totalUsuarios ] = await Promise.all([
+        const [usuarios, totalUsuarios] = await Promise.all([
             Usuario.find({}, 'nombreApellido email telefono fechaNacimiento genero srcImagen biografia hobbies google facebook')
                 .skip(desde)
                 .limit(totalPorPagina),
@@ -328,7 +329,7 @@ const findAllUsuariosPaginados = async(request, response = response) => {
             Usuario.find()
                 .countDocuments()
         ]);
-    
+
         response.status(HTTP_STATUS_OK).json({
             ok: true,
             usuarios: usuarios,
